@@ -7,6 +7,10 @@ import {
 } from "node:fs";
 import { resolve } from "node:path";
 
+export function relativePath(base: string, filePath: string): string {
+  return filePath.startsWith(`${base}/`) ? filePath.slice(base.length + 1) : filePath;
+}
+
 export function ensureExists(path: string, label: string): void {
   if (!existsSync(path)) {
     throw new Error(`${label} not found at "${path}"`);

@@ -10,11 +10,12 @@ import {
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
-import { syncDocsFromArtifacts } from "../docs-sync.js";
-import type { SyncLibraryConfig } from "../docs-sync.js";
+import { syncDocsFromArtifacts } from "../docs/index.js";
+import type { SyncLibraryConfig } from "../docs/index.js";
 import { computeInputsFingerprint } from "../fingerprint.js";
 import type { ArtifactManifest } from "../manifest.js";
-import { DEFAULT_REGISTRY_ORIGIN } from "../origin.js";
+
+const TEST_ORIGIN = "https://diffgazer.com";
 
 function writeText(filePath: string, content: string): void {
   mkdirSync(dirname(filePath), { recursive: true });
@@ -151,7 +152,8 @@ describe("syncDocsFromArtifacts", () => {
       workspaceRoot,
       libraries: [config],
       primaryLibraryId: config.id,
-      origin: DEFAULT_REGISTRY_ORIGIN,
+      origin: TEST_ORIGIN,
+      sourceOrigin: TEST_ORIGIN,
       mode: "workspace",
     });
   }

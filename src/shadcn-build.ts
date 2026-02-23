@@ -2,7 +2,7 @@ import { spawnSync } from "node:child_process";
 import { copyFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { readFileSync } from "node:fs";
-import { normalizeOrigin, rewriteOriginsInDir, DEFAULT_REGISTRY_ORIGIN } from "./origin.js";
+import { normalizeOrigin, rewriteOriginsInDir } from "./origin.js";
 import { ensureExists, resetDir } from "./utils/fs.js";
 import { readJson } from "./utils/json.js";
 
@@ -231,7 +231,7 @@ export interface BuildShadcnRegistryWithOriginOptions {
   registryPath?: string;
   outputDir?: string;
   originRaw?: string;
-  defaultOrigin?: string;
+  defaultOrigin: string;
   fromOrigin?: string;
   beforeBuild?: () => void;
 }
@@ -247,7 +247,7 @@ export function buildShadcnRegistryWithOrigin(options: BuildShadcnRegistryWithOr
     registryPath = "registry/registry.json",
     outputDir = "public/r",
     originRaw = process.env.REGISTRY_ORIGIN,
-    defaultOrigin = DEFAULT_REGISTRY_ORIGIN,
+    defaultOrigin,
     fromOrigin = defaultOrigin,
     beforeBuild,
   } = options;

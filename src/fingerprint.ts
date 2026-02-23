@@ -2,7 +2,7 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync, statSync } from "node:fs";
 import { resolve } from "node:path";
 import { collectAllFiles } from "./utils/fs.js";
-import { relativePath } from "./utils/paths.js";
+import { relativePath } from "./utils/fs.js";
 
 export function computeInputsFingerprint(rootDir: string, inputs: string[]): string {
   const hash = createHash("sha256");

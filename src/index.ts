@@ -13,14 +13,14 @@ export { loadArtifactsFromPackage } from "./artifact-loader.js";
 export type { LoadedArtifacts, LoadFromPackageOptions } from "./artifact-loader.js";
 
 // Consumer side (docs host / artifact sync)
-export { syncDocsFromArtifacts } from "./docs-sync.js";
+export { syncDocsFromArtifacts } from "./docs/index.js";
 export type {
   SyncDocsOptions,
   SyncDocsResult,
   SyncLibraryConfig,
   LoadedLibraryArtifacts,
   AfterSyncContext,
-} from "./docs-sync.js";
+} from "./docs/index.js";
 
 // Manifest validation
 export { validateManifest, ArtifactManifestSchema } from "./manifest.js";
@@ -34,11 +34,9 @@ export {
   rewriteOriginValue,
   rewriteOriginsInDir,
   rewriteOriginsInContent,
-  DEFAULT_REGISTRY_ORIGIN,
 } from "./origin.js";
-export { ensureExists, resetDir, collectAllFiles, collectJsonFiles } from "./utils/fs.js";
+export { ensureExists, resetDir, collectAllFiles, collectJsonFiles, relativePath } from "./utils/fs.js";
 export { readJson, writeJson } from "./utils/json.js";
-export { relativePath } from "./utils/paths.js";
 
 // Re-export all types
 export type * from "./types.js";

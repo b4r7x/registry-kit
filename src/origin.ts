@@ -2,19 +2,17 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { collectJsonFiles } from "./utils/fs.js";
 
-export const DEFAULT_REGISTRY_ORIGIN = "https://diffgazer.com";
-
 export interface OriginRewriteOptions {
-  fromOrigin?: string;
-  toOrigin?: string;
+  fromOrigin: string;
+  toOrigin: string;
 }
 
 export interface NormalizeOriginOptions {
-  defaultOrigin?: string;
+  defaultOrigin: string;
 }
 
-export function normalizeOrigin(raw: string | undefined | null, options: NormalizeOriginOptions = {}): string {
-  const defaultOrigin = options.defaultOrigin ?? DEFAULT_REGISTRY_ORIGIN;
+export function normalizeOrigin(raw: string | undefined | null, options: NormalizeOriginOptions): string {
+  const { defaultOrigin } = options;
   const value = (raw ?? defaultOrigin).trim();
   if (!/^https?:\/\//.test(value)) {
     throw new Error(`REGISTRY_ORIGIN must start with http:// or https:// (received "${value}")`);
@@ -22,9 +20,8 @@ export function normalizeOrigin(raw: string | undefined | null, options: Normali
   return value.replace(/\/+$/, "");
 }
 
-export function rewriteOriginValue(value: unknown, options: OriginRewriteOptions = {}): unknown {
-  const fromOrigin = options.fromOrigin ?? DEFAULT_REGISTRY_ORIGIN;
-  const toOrigin = options.toOrigin ?? DEFAULT_REGISTRY_ORIGIN;
+export function rewriteOriginValue(value: unknown, options: OriginRewriteOptions): unknown {
+  const { fromOrigin, toOrigin } = options;
 
   if (typeof value === "string") {
     return value.replaceAll(fromOrigin, toOrigin);
@@ -48,9 +45,8 @@ export interface RewriteOriginsResult {
   total: number;
 }
 
-export function rewriteOriginsInDir(dir: string, options: OriginRewriteOptions = {}): RewriteOriginsResult {
-  const fromOrigin = options.fromOrigin ?? DEFAULT_REGISTRY_ORIGIN;
-  const toOrigin = options.toOrigin ?? DEFAULT_REGISTRY_ORIGIN;
+export function rewriteOriginsInDir(dir: string, options: OriginRewriteOptions): RewriteOriginsResult {
+  const { fromOrigin, toOrigin } = options;
   let changed = 0;
   const files = collectJsonFiles(dir);
 
@@ -68,8 +64,7 @@ export function rewriteOriginsInDir(dir: string, options: OriginRewriteOptions =
   return { changed, total: files.length };
 }
 
-export function rewriteOriginsInContent(content: string, options: OriginRewriteOptions = {}): string {
-  const fromOrigin = options.fromOrigin ?? DEFAULT_REGISTRY_ORIGIN;
-  const toOrigin = options.toOrigin ?? DEFAULT_REGISTRY_ORIGIN;
+export function rewriteOriginsInContent(content: string, options: OriginRewriteOptions): string {
+  const { fromOrigin, toOrigin } = options;
   return content.replaceAll(fromOrigin, toOrigin);
 }
