@@ -1,0 +1,47 @@
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  rmSync,
+  statSync,
+} from "node:fs";
+import { resolve } from "node:path";
+
+export function ensureExists(path: string, label: string): void {
+  if (!existsSync(path)) {
+    throw new Error(`${label} not found at "${path}"`);
+  }
+}
+
+export function resetDir(path: string): void {
+  rmSync(path, { recursive: true, force: true });
+  mkdirSync(path, { recursive: true });
+}
+
+export function collectAllFiles(rootDir: string, out: string[] = []): string[] {
+  for (const entry of readdirSync(rootDir)) {
+    const fullPath = resolve(rootDir, entry);
+    const stats = statSync(fullPath);
+    if (stats.isDirectory()) {
+      collectAllFiles(fullPath, out);
+      continue;
+    }
+    out.push(fullPath);
+  }
+  return out;
+}
+
+export function collectJsonFiles(rootDir: string, out: string[] = []): string[] {
+  for (const entry of readdirSync(rootDir)) {
+    const fullPath = resolve(rootDir, entry);
+    const stats = statSync(fullPath);
+    if (stats.isDirectory()) {
+      collectJsonFiles(fullPath, out);
+      continue;
+    }
+    if (fullPath.endsWith(".json")) {
+      out.push(fullPath);
+    }
+  }
+  return out;
+}
