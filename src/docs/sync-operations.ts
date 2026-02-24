@@ -7,6 +7,7 @@ import {
 import { basename, resolve } from "node:path";
 import { ensureExists, resetDir, collectJsonFiles } from "../utils/fs.js";
 import { writeJson } from "../utils/json.js";
+import { defaultLogger, type Logger } from "../logger.js";
 import type { LoadedLibraryArtifacts, AfterSyncContext, SyncOutputPaths } from "./types.js";
 
 /** Asserts that no references to `sourceOrigin` remain in registry output after rewriting. */
@@ -126,10 +127,11 @@ function syncLibraryDocs(
 function writeRootMeta(
   artifacts: LoadedLibraryArtifacts[],
   contentDir: string,
+  title = "Documentation",
 ): void {
   const pages = artifacts.map((artifact) => `...${artifact.id}`);
   writeJson(resolve(contentDir, "meta.json"), {
-    title: "Documentation",
+    title,
     root: true,
     pages,
   });
@@ -165,6 +167,8 @@ export function runDocsSyncPass(params: {
   origin: string;
   sourceOrigin: string;
   afterSync?: (ctx: AfterSyncContext) => void;
+  rootTitle?: string;
+  logger?: Logger;
 }): void {
   const {
     artifacts,
@@ -173,6 +177,8 @@ export function runDocsSyncPass(params: {
     origin,
     sourceOrigin,
     afterSync,
+    rootTitle,
+    logger = defaultLogger,
   } = params;
 
   resetDir(paths.contentDir);
@@ -197,9 +203,9 @@ export function runDocsSyncPass(params: {
     });
   }
 
-  writeRootMeta(artifacts, paths.contentDir);
+  writeRootMeta(artifacts, paths.contentDir, rootTitle);
 
-  console.log(
+  logger.info(
     `[docs-sync] Syncing registries (origin asserted: ${origin})...`,
   );
   syncRegistries(artifacts, paths.publicRegistryDir, origin, sourceOrigin);

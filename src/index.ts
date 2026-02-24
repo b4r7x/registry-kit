@@ -1,5 +1,6 @@
 // Producer side (library build scripts)
-export { buildRegistryArtifacts } from "./artifacts.js";
+export { buildRegistryArtifacts, copyArtifactsToPackage } from "./artifacts.js";
+export type { CopyArtifactsToPackageOptions } from "./artifacts.js";
 export {
   buildShadcnRegistryWithOrigin,
   runShadcnRegistryBuild,
@@ -48,3 +49,5 @@ export { readJson, writeJson } from "./utils/json.js";
 
 // Re-export all types
 export type * from "./types.js";
+export { defaultLogger } from "./logger.js";
+export type { Logger } from "./logger.js";

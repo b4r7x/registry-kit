@@ -7,6 +7,7 @@ Reusable engine for building shadcn-compatible registries, publishing artifacts,
 ### Producer Side (Library Build Scripts)
 Functions used by libraries (keyscope, diff-ui) to build their artifacts:
 - `buildRegistryArtifacts(options)` — orchestrate full artifact build: copy dirs, rewrite origins, compute fingerprint, write manifest
+- `copyArtifactsToPackage(options)` — copy built artifacts from a parent project to a child publishable package (e.g., `keyscope/dist/artifacts/` → `keyscope/artifacts/dist/artifacts/`). Supports `cleanStrategy` ("parent-dist" or "artifact-dir") and optional manifest/fingerprint validation.
 - `buildShadcnRegistryWithOrigin(options)` — build shadcn-compatible registry with origin URL configuration
 - `runShadcnRegistryBuild(options)` — execute shadcn CLI for registry generation
 - `ensurePublicRegistryReady()` / `validatePublicRegistryFresh()` — registry validation
@@ -51,7 +52,14 @@ src/
 │   ├── fs.ts             # filesystem helpers
 │   └── json.ts           # JSON I/O helpers
 └── __tests__/
-    └── fingerprint.test.ts
+    ├── artifacts.test.ts
+    ├── copy-artifacts-to-package.test.ts
+    ├── copy-bundle.test.ts
+    ├── copy-bundle-generic.test.ts
+    ├── docs-sync.test.ts
+    ├── fingerprint.test.ts
+    ├── manifest.test.ts
+    └── origin.test.ts
 ```
 
 ## Data Flow

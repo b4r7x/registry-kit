@@ -1,4 +1,5 @@
 import type { ArtifactManifest } from "../manifest.js";
+import type { Logger } from "../logger.js";
 
 // ── Sync Configuration ───────────────────────────────────────────────
 
@@ -31,6 +32,10 @@ export interface SyncDocsOptions {
   afterSync?: (ctx: AfterSyncContext) => void;
   /** Override default output paths. Paths are relative to docsRoot. */
   outputPaths?: Partial<SyncOutputPathsConfig>;
+  /** Title used in the root meta.json (defaults to "Documentation"). */
+  rootTitle?: string;
+  /** Logger for sync progress messages (defaults to console). */
+  logger?: Logger;
 }
 
 export interface AfterSyncContext {

@@ -7,6 +7,7 @@ import {
   shouldSkipSync,
 } from "./cache.js";
 import { resolveSyncOutputPaths } from "./paths.js";
+import { defaultLogger } from "../logger.js";
 import type { SyncDocsOptions, SyncDocsResult } from "./types.js";
 
 /**
@@ -26,11 +27,13 @@ export function syncDocsFromArtifacts(options: SyncDocsOptions): SyncDocsResult 
     syncSchemaVersion = 2,
     afterSync,
     outputPaths: outputPathOverrides,
+    rootTitle,
+    logger = defaultLogger,
   } = options;
 
   const paths = resolveSyncOutputPaths(docsRoot, outputPathOverrides);
 
-  console.log(`[docs-sync] Mode: ${mode}`);
+  logger.info(`[docs-sync] Mode: ${mode}`);
 
   const artifacts = libraries.map((lib) =>
     loadLibraryArtifacts(lib, mode, docsRoot, workspaceRoot),
@@ -51,12 +54,12 @@ export function syncDocsFromArtifacts(options: SyncDocsOptions): SyncDocsResult 
   const syncState = readSyncState(paths.stateFilePath);
 
   if (shouldSkipSync({ syncState, syncFingerprint, artifacts, paths })) {
-    console.log("[docs-sync] Artifacts unchanged; skipping sync.");
+    logger.info("[docs-sync] Artifacts unchanged; skipping sync.");
     return { synced: false, fingerprint: syncFingerprint, artifacts };
   }
 
-  console.log("[docs-sync] Syncing docs and generated artifacts...");
-  runDocsSyncPass({ artifacts, primaryArtifact, paths, origin, sourceOrigin, afterSync });
+  logger.info("[docs-sync] Syncing docs and generated artifacts...");
+  runDocsSyncPass({ artifacts, primaryArtifact, paths, origin, sourceOrigin, afterSync, rootTitle, logger });
 
   writeSyncState(paths.stateFilePath, {
     fingerprint: syncFingerprint,
@@ -64,7 +67,7 @@ export function syncDocsFromArtifacts(options: SyncDocsOptions): SyncDocsResult 
     syncedAt: new Date().toISOString(),
   });
 
-  console.log("[docs-sync] Done.");
+  logger.info("[docs-sync] Done.");
   return { synced: true, fingerprint: syncFingerprint, artifacts };
 }
 
