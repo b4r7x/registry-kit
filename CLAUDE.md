@@ -20,7 +20,6 @@ Functions used by the docs app to consume library artifacts:
 - `computeInputsFingerprint()` — SHA-256 hashing of source files for change detection
 - `validateManifest()` / `ArtifactManifestSchema` — Zod-based manifest validation (schema v1)
 - `normalizeOrigin()` / `rewriteOriginValue()` / `rewriteOriginsInDir()` — registry origin URL rewriting
-- `buildHookCopyBundle()` — generate hook copy bundles with integrity hashing
 - File system helpers: `ensureExists`, `resetDir`, `collectAllFiles`, `collectJsonFiles`
 - JSON helpers: `readJson`, `writeJson`
 
@@ -108,6 +107,4 @@ pnpm test           # vitest
 
 ## Known Limitations
 
-- Output paths in `docs/paths.ts` are currently hardcoded (`content/docs`, `src/generated`, etc.) — making configurable is planned
-- `buildHookCopyBundle` only supports `registry:hook` type — generalization planned
-- Internal `resolveSyncOutputPaths()` not exported — planned export for advanced use
+_None — all previously listed limitations have been resolved._

@@ -4,7 +4,7 @@ import type { ArtifactManifest } from "../manifest.js";
 
 export interface SyncLibraryConfig {
   id: string;
-  /** npm package name for artifacts (e.g., `@b4r7x/diff-ui-artifacts`). */
+  /** npm package name for artifacts (e.g., `@scope/my-lib-artifacts`). */
   packageName: string;
   /** Workspace-relative directory name (used in workspace mode). */
   workspaceDir: string;
