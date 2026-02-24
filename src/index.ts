@@ -6,7 +6,7 @@ export {
   ensurePublicRegistryReady,
   validatePublicRegistryFresh,
   resolveLocalShadcnBin,
-} from "./shadcn-build.js";
+} from "./shadcn/index.js";
 
 // Consumer side (docs host / artifact loading)
 export { loadArtifactsFromPackage } from "./artifact-loader.js";
@@ -30,15 +30,12 @@ export { validateManifest, ArtifactManifestSchema } from "./manifest.js";
 
 // Shared utilities
 export { computeInputsFingerprint } from "./fingerprint.js";
-export { buildCopyBundle, buildHookCopyBundle } from "./copy-bundle.js";
+export { buildCopyBundle } from "./copy-bundle.js";
 export type {
   CopyBundle,
   CopyBundleItem,
   BuildCopyBundleOptions,
   BuildCopyBundleResult,
-  HookCopyBundle,
-  BuildHookCopyBundleOptions,
-  BuildHookCopyBundleResult,
 } from "./copy-bundle.js";
 export {
   normalizeOrigin,
@@ -48,10 +45,6 @@ export {
 } from "./origin.js";
 export { ensureExists, resetDir, collectAllFiles, collectJsonFiles, relativePath } from "./utils/fs.js";
 export { readJson, writeJson } from "./utils/json.js";
-
-// Registry item extraction
-export { loadRegistry, extractRegistryItems } from "./registry-utils.js";
-export type { RegistryItem, LoadRegistryOptions, ExtractRegistryItemsOptions } from "./registry-utils.js";
 
 // Re-export all types
 export type * from "./types.js";

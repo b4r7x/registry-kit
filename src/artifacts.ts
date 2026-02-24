@@ -4,7 +4,7 @@ import { computeInputsFingerprint } from "./fingerprint.js";
 import { normalizeOrigin, rewriteOriginsInDir } from "./origin.js";
 import { ensureExists, resetDir } from "./utils/fs.js";
 import { writeJson } from "./utils/json.js";
-import { ensurePublicRegistryReady, type EnsurePublicRegistryReadyOptions } from "./shadcn-build.js";
+import { ensurePublicRegistryReady, type EnsurePublicRegistryReadyOptions } from "./shadcn/index.js";
 import type { ArtifactManifest } from "./manifest.js";
 
 export interface CopyDirEntry {

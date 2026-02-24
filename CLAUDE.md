@@ -30,13 +30,17 @@ Functions used by the docs app to consume library artifacts:
 src/
 ├── index.ts              # barrel exports
 ├── artifacts.ts          # producer API: build artifacts
-├── shadcn-build.ts       # shadcn CLI integration
 ├── artifact-loader.ts    # consumer API: load from npm packages
 ├── manifest.ts           # Zod validation for artifact manifests
 ├── origin.ts             # origin URL rewriting
 ├── fingerprint.ts        # SHA-256 input fingerprinting
 ├── copy-bundle.ts        # hook copy bundle generation
 ├── types.ts              # shared type exports
+├── shadcn/
+│   ├── index.ts          # re-exports from runner, validate, build
+│   ├── runner.ts         # shadcn CLI invocation
+│   ├── validate.ts       # public registry freshness validation
+│   └── build.ts          # build orchestration with origin rewriting
 ├── docs/
 │   ├── index.ts          # sync orchestrator
 │   ├── types.ts          # configuration types
@@ -97,6 +101,10 @@ pnpm test           # vitest
 - All sync operations use fingerprint-based caching (skip unchanged)
 - Artifacts always include manifest + fingerprint for integrity verification
 - Mode auto-detection: `DIFFGAZER_DEV=1` → workspace, `CI=1` → package
+
+### Implicit dependencies
+
+- `shadcn` CLI binary — Required by `runShadcnRegistryBuild()` / `ensurePublicRegistryReady()`. Must be installed in the consuming project's `node_modules/.bin/`. Resolved via `resolveLocalShadcnBin()` (checks 3 levels up).
 
 ## Known Limitations
 

@@ -2,10 +2,10 @@ import { describe, expect, it } from "vitest";
 import { mkdtempSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
-import { buildHookCopyBundle } from "../copy-bundle.js";
+import { buildCopyBundle } from "../copy-bundle.js";
 
-describe("buildHookCopyBundle", () => {
-  it("builds a hook copy bundle from registry metadata", () => {
+describe("buildCopyBundle (legacy hook bundle behavior)", () => {
+  it("builds a copy bundle from registry metadata", () => {
     const root = mkdtempSync(join(tmpdir(), "rk-copy-bundle-"));
     mkdirSync(join(root, "registry"), { recursive: true });
     mkdirSync(join(root, "src/hooks"), { recursive: true });
@@ -49,21 +49,23 @@ describe("buildHookCopyBundle", () => {
     );
 
     const outputPath = join(root, "copy-bundle.json");
-    const result = buildHookCopyBundle({
+    const result = buildCopyBundle({
       sourceRoot: root,
       outputPath,
+      itemType: "registry:hook",
+      pathMapping: { from: "src/hooks/", to: "hooks/" },
     });
 
     const output = JSON.parse(readFileSync(outputPath, "utf-8")) as {
-      hooks: Array<{ name: string; files: Array<{ path: string; content: string }> }>;
+      items: Array<{ name: string; files: Array<{ path: string; content: string }> }>;
       integrity: string;
     };
 
-    expect(result.hookCount).toBe(1);
-    expect(output.hooks).toHaveLength(1);
-    expect(output.hooks[0]?.name).toBe("navigation");
-    expect(output.hooks[0]?.files[0]?.path).toBe("registry/hooks/use-navigation.ts");
-    expect(output.hooks[0]?.files[0]?.content).toContain("useNavigation");
+    expect(result.itemCount).toBe(1);
+    expect(output.items).toHaveLength(1);
+    expect(output.items[0]?.name).toBe("navigation");
+    expect(output.items[0]?.files[0]?.path).toBe("hooks/use-navigation.ts");
+    expect(output.items[0]?.files[0]?.content).toContain("useNavigation");
     expect(output.integrity.startsWith("sha256-")).toBe(true);
   });
 });

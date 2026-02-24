@@ -130,7 +130,7 @@ function loadFromWorkspace(
         `${config.id} artifacts are stale.`,
         `Expected fingerprint: ${expectedFingerprint}`,
         `Current fingerprint:  ${currentFingerprint}`,
-        `Run: pnpm --dir ${config.workspaceDir} build:artifacts`,
+        `Rebuild artifacts: run build:artifacts in ${config.workspaceDir}`,
       ].join("\n"),
     );
   }
