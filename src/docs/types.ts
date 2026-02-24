@@ -29,6 +29,8 @@ export interface SyncDocsOptions {
   syncSchemaVersion?: number;
   /** Optional post-processing for generated files per library. */
   afterSync?: (ctx: AfterSyncContext) => void;
+  /** Override default output paths. Paths are relative to docsRoot. */
+  outputPaths?: Partial<SyncOutputPathsConfig>;
 }
 
 export interface AfterSyncContext {
@@ -54,6 +56,29 @@ export interface LoadedLibraryArtifacts {
 
 // ── Sync Output Paths ────────────────────────────────────────────────
 
+/** Relative paths (to docsRoot) for configuring sync output locations. */
+export interface SyncOutputPathsConfig {
+  contentDir: string;
+  generatedDir: string;
+  registryDir: string;
+  stylesDir: string;
+  publicRegistryDir: string;
+  libraryAssetsDir: string;
+  stateFile: string;
+}
+
+/** Default relative paths used when no overrides are provided. */
+export const DEFAULT_OUTPUT_PATHS: SyncOutputPathsConfig = {
+  contentDir: "content/docs",
+  generatedDir: "src/generated",
+  registryDir: "registry",
+  stylesDir: "styles",
+  publicRegistryDir: "public/r",
+  libraryAssetsDir: "public/library-assets",
+  stateFile: ".cache/sync-artifacts-state.json",
+};
+
+/** Resolved absolute paths for sync output. */
 export interface SyncOutputPaths {
   contentDir: string;
   generatedDir: string;

@@ -25,9 +25,10 @@ export function syncDocsFromArtifacts(options: SyncDocsOptions): SyncDocsResult 
     mode,
     syncSchemaVersion = 2,
     afterSync,
+    outputPaths: outputPathOverrides,
   } = options;
 
-  const paths = resolveSyncOutputPaths(docsRoot);
+  const paths = resolveSyncOutputPaths(docsRoot, outputPathOverrides);
 
   console.log(`[docs-sync] Mode: ${mode}`);
 

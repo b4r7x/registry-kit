@@ -14,21 +14,32 @@ export type { LoadedArtifacts, LoadFromPackageOptions } from "./artifact-loader.
 
 // Consumer side (docs host / artifact sync)
 export { syncDocsFromArtifacts } from "./docs/index.js";
+export { resolveSyncOutputPaths } from "./docs/paths.js";
 export type {
   SyncDocsOptions,
   SyncDocsResult,
   SyncLibraryConfig,
+  SyncOutputPathsConfig,
   LoadedLibraryArtifacts,
   AfterSyncContext,
-} from "./docs/index.js";
+} from "./docs/types.js";
+export { DEFAULT_OUTPUT_PATHS } from "./docs/types.js";
 
 // Manifest validation
 export { validateManifest, ArtifactManifestSchema } from "./manifest.js";
 
 // Shared utilities
 export { computeInputsFingerprint } from "./fingerprint.js";
-export { buildHookCopyBundle } from "./copy-bundle.js";
-export type { HookCopyBundle, BuildHookCopyBundleOptions, BuildHookCopyBundleResult } from "./copy-bundle.js";
+export { buildCopyBundle, buildHookCopyBundle } from "./copy-bundle.js";
+export type {
+  CopyBundle,
+  CopyBundleItem,
+  BuildCopyBundleOptions,
+  BuildCopyBundleResult,
+  HookCopyBundle,
+  BuildHookCopyBundleOptions,
+  BuildHookCopyBundleResult,
+} from "./copy-bundle.js";
 export {
   normalizeOrigin,
   rewriteOriginValue,
@@ -37,6 +48,10 @@ export {
 } from "./origin.js";
 export { ensureExists, resetDir, collectAllFiles, collectJsonFiles, relativePath } from "./utils/fs.js";
 export { readJson, writeJson } from "./utils/json.js";
+
+// Registry item extraction
+export { loadRegistry, extractRegistryItems } from "./registry-utils.js";
+export type { RegistryItem, LoadRegistryOptions, ExtractRegistryItemsOptions } from "./registry-utils.js";
 
 // Re-export all types
 export type * from "./types.js";
