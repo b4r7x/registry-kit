@@ -69,7 +69,7 @@ syncDocsFromArtifacts({
     { id: "my-lib", packageName: "@scope/my-lib-artifacts", workspaceDir: "my-lib" },
   ],
   primaryLibraryId: "my-lib",
-  origin: normalizeOrigin(process.env.REGISTRY_ORIGIN),
+  origin: normalizeOrigin(process.env.REGISTRY_ORIGIN, { defaultOrigin: "https://example.com" }),
   mode: process.env.DEV ? "workspace" : "package",
 });
 ```
