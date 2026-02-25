@@ -109,6 +109,7 @@ function syncLibraryDocs(
     const targetDir = resolve(generatedDir, artifact.id);
     mkdirSync(targetDir, { recursive: true });
     cpSync(sourcePath, resolve(targetDir, basename(generatedFile)), {
+      recursive: true,
       force: true,
     });
   }

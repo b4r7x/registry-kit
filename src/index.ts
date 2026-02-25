@@ -47,6 +47,35 @@ export {
 export { ensureExists, resetDir, collectAllFiles, collectJsonFiles, relativePath } from "./utils/fs.js";
 export { readJson, writeJson } from "./utils/json.js";
 
+// Docs data types
+export type {
+  DocNote,
+  ExampleRef,
+  UsageSection,
+  HookParameter,
+  HookReturn,
+  HookDoc,
+  CodeBlockLine,
+  HookSourceData,
+  EnrichedHookData,
+} from "./docs-data/index.js";
+
+// Docs data utilities
+export {
+  createDocsHighlighter,
+  highlightCode,
+  generateHooksSource,
+  generateEnrichedHookData,
+} from "./docs-data/index.js";
+export type {
+  HighlightLanguage,
+  DocsHighlighter,
+  CreateHighlighterOptions,
+  HookRegistryItem,
+  GenerateHooksSourceOptions,
+  GenerateEnrichedHookDataOptions,
+} from "./docs-data/index.js";
+
 // Re-export all types
 export type * from "./types.js";
 export { defaultLogger } from "./logger.js";
