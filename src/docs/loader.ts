@@ -1,6 +1,7 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { basename } from "node:path";
+import { ARTIFACT_MANIFEST_REL_PATH } from "../constants.js";
 import { loadArtifactsFromPackage } from "../artifact-loader.js";
 import { computeInputsFingerprint } from "../fingerprint.js";
 import { validateManifest } from "../manifest.js";
@@ -98,7 +99,7 @@ function loadFromWorkspace(
   const libraryRoot = resolve(workspaceRoot, config.workspaceDir);
   const manifestPath = resolve(
     libraryRoot,
-    "dist/artifacts/artifact-manifest.json",
+    ARTIFACT_MANIFEST_REL_PATH,
   );
   ensureExists(manifestPath, `${config.id} artifact manifest`);
 

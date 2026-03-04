@@ -1,6 +1,7 @@
 import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
 import { readFileSync } from "node:fs";
+import { ARTIFACT_MANIFEST_REL_PATH } from "./constants.js";
 import { validateManifest } from "./manifest.js";
 import { computeInputsFingerprint } from "./fingerprint.js";
 import { ensureExists } from "./utils/fs.js";
@@ -32,7 +33,7 @@ export function loadArtifactsFromPackage(
 ): LoadedArtifacts {
   const {
     packageName,
-    manifestRelPath = "dist/artifacts/artifact-manifest.json",
+    manifestRelPath = ARTIFACT_MANIFEST_REL_PATH,
     from = process.cwd(),
   } = options;
 

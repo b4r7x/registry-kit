@@ -30,6 +30,7 @@ export { DEFAULT_OUTPUT_PATHS } from "./docs/types.js";
 export { validateManifest, ArtifactManifestSchema } from "./manifest.js";
 
 // Shared utilities
+export { ARTIFACT_MANIFEST_FILENAME, ARTIFACT_FINGERPRINT_FILENAME, ARTIFACT_MANIFEST_REL_PATH } from "./constants.js";
 export { computeInputsFingerprint } from "./fingerprint.js";
 export { buildCopyBundle } from "./copy-bundle.js";
 export type {

@@ -1,5 +1,6 @@
 import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { ARTIFACT_MANIFEST_FILENAME, ARTIFACT_FINGERPRINT_FILENAME } from "./constants.js";
 import { computeInputsFingerprint } from "./fingerprint.js";
 import { normalizeOrigin, rewriteOriginsInDir } from "./origin.js";
 import { ensureExists, resetDir } from "./utils/fs.js";
@@ -56,8 +57,8 @@ export function buildRegistryArtifacts(options: BuildRegistryArtifactsOptions): 
     artifactRoot = "dist/artifacts",
     inputs = [],
     manifest,
-    manifestFile = "artifact-manifest.json",
-    fingerprintFile = "fingerprint.sha256",
+    manifestFile = ARTIFACT_MANIFEST_FILENAME,
+    fingerprintFile = ARTIFACT_FINGERPRINT_FILENAME,
     ensurePublicRegistry: ensurePublicRegistryOptions,
     requiredPaths = [],
     copyDirs = [],
@@ -157,8 +158,8 @@ export function copyArtifactsToPackage(options: CopyArtifactsToPackageOptions): 
   }
 
   if (shouldValidateManifest) {
-    ensureExists(resolve(source, "artifact-manifest.json"), `${label} artifact manifest`);
-    ensureExists(resolve(source, "fingerprint.sha256"), `${label} artifact fingerprint`);
+    ensureExists(resolve(source, ARTIFACT_MANIFEST_FILENAME), `${label} artifact manifest`);
+    ensureExists(resolve(source, ARTIFACT_FINGERPRINT_FILENAME), `${label} artifact fingerprint`);
   }
 
   if (cleanStrategy === "parent-dist") {
