@@ -54,7 +54,7 @@ describe("highlightCode", () => {
       expect(line).toHaveProperty("number");
       expect(line).toHaveProperty("content");
       expect(typeof line.number).toBe("number");
-      expect(typeof line.content).toBe("string");
+      expect(Array.isArray(line.content)).toBe(true);
     }
   });
 
@@ -65,23 +65,28 @@ describe("highlightCode", () => {
     expect(lines[2]!.number).toBe(3);
   });
 
-  it("escapes HTML entities in code", () => {
+  it("preserves special characters in token text", () => {
     const lines = highlightCode(
       highlighter,
       'const a = "<div>&amp;</div>";',
       "typescript",
       TEST_THEME_NAME,
     );
-    const html = lines.map((l) => l.content).join("");
-    expect(html).toContain("&lt;");
-    expect(html).toContain("&gt;");
-    expect(html).toContain("&amp;");
+    const allText = lines.flatMap((l) => l.content.map((t) => t.text)).join("");
+    expect(allText).toContain("<div>");
+    expect(allText).toContain("&amp;");
+    expect(allText).toContain("</div>");
   });
 
-  it("wraps tokens in span elements with color", () => {
+  it("returns tokens with text and optional color", () => {
     const lines = highlightCode(highlighter, "const x = 1;", "typescript", TEST_THEME_NAME);
-    const html = lines[0]!.content;
-    expect(html).toMatch(/<span style="color:#[a-fA-F0-9]+">/);
+    const tokens = lines[0]!.content;
+    expect(Array.isArray(tokens)).toBe(true);
+    expect(tokens.length).toBeGreaterThan(0);
+    for (const token of tokens) {
+      expect(token).toHaveProperty("text");
+      expect(typeof token.text).toBe("string");
+    }
   });
 });
 

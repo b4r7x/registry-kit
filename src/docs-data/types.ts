@@ -50,10 +50,16 @@ export interface HookDoc {
 
 // --- Generated data types (output of build pipeline) ---
 
+/** A single syntax-highlighted token within a code line. */
+export interface CodeBlockToken {
+  text: string
+  color?: string
+}
+
 /** Syntax-highlighted code block line. */
 export interface CodeBlockLine {
   number: number
-  content: string
+  content: CodeBlockToken[]
   type?: "highlight" | "added" | "removed"
 }
 

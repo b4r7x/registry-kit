@@ -22,26 +22,13 @@ export interface CreateHighlighterOptions {
 
 export type DocsHighlighter = Awaited<ReturnType<typeof createHighlighterCore>>;
 
-const HTML_ESCAPE: Record<string, string> = {
-  "&": "&amp;",
-  "<": "&lt;",
-  ">": "&gt;",
-  '"': "&quot;",
-  "'": "&#39;",
-};
-
-function escapeHtml(str: string): string {
-  return str.replace(/[&<>"']/g, (c) => HTML_ESCAPE[c]!);
-}
-
 function tokensToCodeBlockLines(lines: ThemedToken[][]): CodeBlockLine[] {
   return lines.map((lineTokens, i) => ({
     number: i + 1,
-    content: lineTokens
-      .map(
-        (t) => `<span style="color:${t.color}">${escapeHtml(t.content)}</span>`
-      )
-      .join(""),
+    content: lineTokens.map((t) => ({
+      text: t.content,
+      ...(t.color ? { color: t.color } : {}),
+    })),
   }));
 }
 

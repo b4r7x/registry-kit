@@ -5,6 +5,7 @@ export type {
   HookParameter,
   HookReturn,
   HookDoc,
+  CodeBlockToken,
   CodeBlockLine,
   HookSourceData,
   EnrichedHookData,
