@@ -1,4 +1,7 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { z } from "zod";
+import { DEFAULT_ARTIFACT_ROOT, ARTIFACT_FINGERPRINT_FILENAME } from "./constants.js";
 
 export const ArtifactManifestDocsSchema = z.object({
   contentDir: z.string().min(1),
@@ -51,6 +54,34 @@ export interface ValidateManifestResult {
 export interface ValidateManifestError {
   success: false;
   errors: string[];
+}
+
+export interface CreateArtifactManifestOptions {
+  rootDir: string;
+  library: string;
+  packageName?: string;
+  inputs: string[];
+  docs: ArtifactManifestDocs;
+  registry: ArtifactManifestRegistry;
+  source?: z.infer<typeof ArtifactManifestSourceSchema>;
+  generated?: Record<string, string>;
+}
+
+export function createArtifactManifest(options: CreateArtifactManifestOptions): ArtifactManifest {
+  const pkg = JSON.parse(readFileSync(resolve(options.rootDir, "package.json"), "utf-8"));
+  return {
+    schemaVersion: 1,
+    library: options.library,
+    package: options.packageName ?? pkg.name ?? options.library,
+    version: pkg.version ?? "0.0.0",
+    artifactRoot: DEFAULT_ARTIFACT_ROOT,
+    inputs: options.inputs,
+    docs: options.docs,
+    registry: options.registry,
+    ...(options.source && { source: options.source }),
+    ...(options.generated && { generated: options.generated }),
+    integrity: { algorithm: "sha256", fingerprintFile: ARTIFACT_FINGERPRINT_FILENAME },
+  };
 }
 
 export function validateManifest(data: unknown): ValidateManifestResult | ValidateManifestError {

@@ -26,11 +26,12 @@ export type {
 } from "./docs/types.js";
 export { DEFAULT_OUTPUT_PATHS } from "./docs/types.js";
 
-// Manifest validation
-export { validateManifest, ArtifactManifestSchema } from "./manifest.js";
+// Manifest validation & factory
+export { validateManifest, ArtifactManifestSchema, createArtifactManifest } from "./manifest.js";
+export type { CreateArtifactManifestOptions } from "./manifest.js";
 
 // Shared utilities
-export { ARTIFACT_MANIFEST_FILENAME, ARTIFACT_FINGERPRINT_FILENAME, ARTIFACT_MANIFEST_REL_PATH } from "./constants.js";
+export { ARTIFACT_MANIFEST_FILENAME, ARTIFACT_FINGERPRINT_FILENAME, ARTIFACT_MANIFEST_REL_PATH, DEFAULT_ARTIFACT_ROOT } from "./constants.js";
 export { computeInputsFingerprint } from "./fingerprint.js";
 export { buildCopyBundle } from "./copy-bundle.js";
 export type {

@@ -1,6 +1,6 @@
 import { cpSync, existsSync, mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { ARTIFACT_MANIFEST_FILENAME, ARTIFACT_FINGERPRINT_FILENAME } from "./constants.js";
+import { ARTIFACT_MANIFEST_FILENAME, ARTIFACT_FINGERPRINT_FILENAME, DEFAULT_ARTIFACT_ROOT } from "./constants.js";
 import { computeInputsFingerprint } from "./fingerprint.js";
 import { normalizeOrigin, rewriteOriginsInDir } from "./origin.js";
 import { ensureExists, resetDir } from "./utils/fs.js";
@@ -54,8 +54,7 @@ export interface BuildRegistryArtifactsResult {
 export function buildRegistryArtifacts(options: BuildRegistryArtifactsOptions): BuildRegistryArtifactsResult {
   const {
     rootDir,
-    artifactRoot = "dist/artifacts",
-    inputs = [],
+    artifactRoot = DEFAULT_ARTIFACT_ROOT,
     manifest,
     manifestFile = ARTIFACT_MANIFEST_FILENAME,
     fingerprintFile = ARTIFACT_FINGERPRINT_FILENAME,
@@ -69,6 +68,7 @@ export function buildRegistryArtifacts(options: BuildRegistryArtifactsOptions): 
     beforeBuild,
     afterCopy,
   } = options;
+  const inputs = options.inputs ?? manifest.inputs ?? [];
 
   if (typeof beforeBuild === "function") {
     beforeBuild();
@@ -141,7 +141,7 @@ export function copyArtifactsToPackage(options: CopyArtifactsToPackageOptions): 
   const {
     sourceRoot,
     packageRoot,
-    artifactDir = "dist/artifacts",
+    artifactDir = DEFAULT_ARTIFACT_ROOT,
     label,
     rebuildHint,
     validateManifest: shouldValidateManifest = true,
