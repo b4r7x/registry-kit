@@ -9,3 +9,5 @@ export const DEFAULT_ARTIFACT_ROOT = "dist/artifacts";
 
 /** Default relative path from a package root to the artifact manifest. */
 export const ARTIFACT_MANIFEST_REL_PATH = `${DEFAULT_ARTIFACT_ROOT}/${ARTIFACT_MANIFEST_FILENAME}`;
+
+export const DEFAULT_REGISTRY_ORIGIN = "https://diffgazer.com";

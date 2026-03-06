@@ -31,7 +31,7 @@ export { validateManifest, ArtifactManifestSchema, createArtifactManifest } from
 export type { CreateArtifactManifestOptions } from "./manifest.js";
 
 // Shared utilities
-export { ARTIFACT_MANIFEST_FILENAME, ARTIFACT_FINGERPRINT_FILENAME, ARTIFACT_MANIFEST_REL_PATH, DEFAULT_ARTIFACT_ROOT } from "./constants.js";
+export { ARTIFACT_MANIFEST_FILENAME, ARTIFACT_FINGERPRINT_FILENAME, ARTIFACT_MANIFEST_REL_PATH, DEFAULT_ARTIFACT_ROOT, DEFAULT_REGISTRY_ORIGIN } from "./constants.js";
 export { computeInputsFingerprint } from "./fingerprint.js";
 export { buildCopyBundle } from "./copy-bundle.js";
 export type {
@@ -69,6 +69,11 @@ export {
   highlightCode,
   generateHooksSource,
   generateEnrichedHookData,
+  docsCodeTheme,
+  DOCS_CODE_THEME_NAME,
+  kebabToCamelCase,
+  toDocExportName,
+  toYamlString,
 } from "./docs-data/index.js";
 export type {
   HighlightLanguage,
@@ -78,6 +83,9 @@ export type {
   GenerateHooksSourceOptions,
   GenerateEnrichedHookDataOptions,
 } from "./docs-data/index.js";
+
+// Registry types
+export type { RegistryFile, RegistryItem, Registry } from "./registry-types.js";
 
 // Re-export all types
 export type * from "./types.js";

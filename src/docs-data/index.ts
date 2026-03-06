@@ -30,3 +30,6 @@ export type {
   GenerateHooksSourceOptions,
   GenerateEnrichedHookDataOptions,
 } from "./hooks-source.js"
+
+export { docsCodeTheme, DOCS_CODE_THEME_NAME } from "./code-theme.js"
+export { kebabToCamelCase, toDocExportName, toYamlString } from "./utils.js"
