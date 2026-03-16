@@ -96,7 +96,11 @@ export function buildRegistryArtifacts(options: BuildRegistryArtifactsOptions): 
   for (const copyEntry of copyDirs) {
     const from = resolve(rootDir, copyEntry.from);
     const to = resolve(artifactRootPath, copyEntry.to);
-    cpSync(from, to, { recursive: true, force: true });
+    cpSync(from, to, {
+      recursive: true,
+      force: true,
+      filter: (src) => !/\.(md)$/i.test(src),
+    });
   }
 
   for (const relativeDir of rewriteDirs) {
