@@ -158,6 +158,18 @@ describe("syncDocsFromArtifacts", () => {
     });
   }
 
+  it("throws when manifest.generated has duplicate output basenames", () => {
+    const fixture = createLibraryFixture({
+      workspaceRoot,
+      generated: {
+        "key-a": "generated/path-a/data.json",
+        "key-b": "generated/path-b/data.json", // same basename as key-a
+      },
+    });
+
+    expect(() => runSync(fixture.config)).toThrow(/duplicate output name/i);
+  });
+
   it("throws when workspace artifact fingerprint is stale", () => {
     const fixture = createLibraryFixture({
       workspaceRoot,

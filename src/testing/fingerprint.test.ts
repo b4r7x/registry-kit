@@ -15,7 +15,7 @@ describe("computeInputsFingerprint", () => {
     rmSync(tempDir, { recursive: true, force: true });
   });
 
-  it("should produce deterministic output for same inputs", () => {
+  it("produces deterministic output for same inputs", () => {
     writeFileSync(join(tempDir, "a.txt"), "hello");
     writeFileSync(join(tempDir, "b.txt"), "world");
 
@@ -26,7 +26,7 @@ describe("computeInputsFingerprint", () => {
     expect(fp1).toHaveLength(64); // SHA-256 hex
   });
 
-  it("should change when file content changes", () => {
+  it("changes when file content changes", () => {
     writeFileSync(join(tempDir, "a.txt"), "hello");
     const fp1 = computeInputsFingerprint(tempDir, ["a.txt"]);
 
@@ -36,7 +36,7 @@ describe("computeInputsFingerprint", () => {
     expect(fp1).not.toBe(fp2);
   });
 
-  it("should include files from directories recursively", () => {
+  it("includes files from directories recursively", () => {
     mkdirSync(join(tempDir, "sub"), { recursive: true });
     writeFileSync(join(tempDir, "sub", "nested.txt"), "nested");
     const fp = computeInputsFingerprint(tempDir, ["sub"]);
@@ -44,18 +44,17 @@ describe("computeInputsFingerprint", () => {
     expect(fp).toHaveLength(64);
   });
 
-  it("should be order-dependent for inputs array (matches original behavior)", () => {
+  it("is order-dependent for inputs array", () => {
     writeFileSync(join(tempDir, "a.txt"), "aaa");
     writeFileSync(join(tempDir, "b.txt"), "bbb");
 
     const fp1 = computeInputsFingerprint(tempDir, ["a.txt", "b.txt"]);
     const fp2 = computeInputsFingerprint(tempDir, ["b.txt", "a.txt"]);
 
-    // Order of inputs matters — same as original cli-core/artifacts.mjs behavior
     expect(fp1).not.toBe(fp2);
   });
 
-  it("should skip missing inputs gracefully", () => {
+  it("skips missing inputs gracefully", () => {
     writeFileSync(join(tempDir, "a.txt"), "exists");
 
     const fp = computeInputsFingerprint(tempDir, ["a.txt", "nonexistent.txt"]);

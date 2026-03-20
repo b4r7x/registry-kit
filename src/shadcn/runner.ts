@@ -33,20 +33,14 @@ export function runShadcnRegistryBuild(options: RunShadcnRegistryBuildOptions): 
   } = options;
 
   const localBin = resolveLocalShadcnBin(rootDir);
-  const args = ["build", registryPath, "--output", outputDir];
   if (!localBin) {
     throw new Error(
-      [
-        "Local shadcn CLI binary not found.",
-        "Install dependencies so node_modules/.bin/shadcn exists.",
-      ].join("\n"),
+      "Local shadcn CLI binary not found.\nInstall dependencies so node_modules/.bin/shadcn exists.",
     );
   }
 
   resetDir(resolve(rootDir, outputDir));
-  run(localBin, args, rootDir);
+  run(localBin, ["build", registryPath, "--output", outputDir], rootDir);
 
-  const sourceRegistryPath = resolve(rootDir, registryPath);
-  const publicRegistryIndexPath = resolve(rootDir, outputDir, "registry.json");
-  copyFileSync(sourceRegistryPath, publicRegistryIndexPath);
+  copyFileSync(resolve(rootDir, registryPath), resolve(rootDir, outputDir, "registry.json"));
 }

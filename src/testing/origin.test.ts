@@ -12,25 +12,21 @@ import {
 const TEST_ORIGIN = "https://diffgazer.com";
 
 describe("normalizeOrigin", () => {
-  it("should use default when raw is undefined", () => {
-    expect(normalizeOrigin(undefined, { defaultOrigin: TEST_ORIGIN })).toBe(TEST_ORIGIN);
+  it("uses default when raw is undefined", () => {
+    expect(normalizeOrigin(undefined, { defaultOrigin: "https://custom.dev" })).toBe("https://custom.dev");
   });
 
-  it("should strip trailing slashes", () => {
+  it("strips trailing slashes", () => {
     expect(normalizeOrigin("https://example.com///", { defaultOrigin: TEST_ORIGIN })).toBe("https://example.com");
   });
 
-  it("should throw for non-http(s) origins", () => {
+  it("throws for non-http(s) origins", () => {
     expect(() => normalizeOrigin("ftp://nope.com", { defaultOrigin: TEST_ORIGIN })).toThrow();
-  });
-
-  it("should accept custom default", () => {
-    expect(normalizeOrigin(undefined, { defaultOrigin: "https://custom.dev" })).toBe("https://custom.dev");
   });
 });
 
 describe("rewriteOriginValue", () => {
-  it("should replace origin in strings", () => {
+  it("replaces origin in strings", () => {
     const result = rewriteOriginValue(
       `${TEST_ORIGIN}/r/diff-ui/button.json`,
       { fromOrigin: TEST_ORIGIN, toOrigin: "https://localhost:3000" },
@@ -38,7 +34,7 @@ describe("rewriteOriginValue", () => {
     expect(result).toBe("https://localhost:3000/r/diff-ui/button.json");
   });
 
-  it("should handle nested objects recursively", () => {
+  it("handles nested objects recursively", () => {
     const input = {
       url: `${TEST_ORIGIN}/test`,
       nested: { deep: `${TEST_ORIGIN}/deep` },
@@ -53,7 +49,7 @@ describe("rewriteOriginValue", () => {
     });
   });
 
-  it("should handle arrays", () => {
+  it("handles arrays", () => {
     const result = rewriteOriginValue(
       [`${TEST_ORIGIN}/a`, `${TEST_ORIGIN}/b`],
       { fromOrigin: TEST_ORIGIN, toOrigin: "https://x.com" },
@@ -61,7 +57,7 @@ describe("rewriteOriginValue", () => {
     expect(result).toEqual(["https://x.com/a", "https://x.com/b"]);
   });
 
-  it("should pass through non-string/non-object values", () => {
+  it("passes through non-string/non-object values", () => {
     const opts = { fromOrigin: TEST_ORIGIN, toOrigin: "https://x.com" };
     expect(rewriteOriginValue(42, opts)).toBe(42);
     expect(rewriteOriginValue(null, opts)).toBe(null);
@@ -80,7 +76,7 @@ describe("rewriteOriginsInDir", () => {
     rmSync(tempDir, { recursive: true, force: true });
   });
 
-  it("should rewrite origins in JSON files", () => {
+  it("rewrites origins in JSON files", () => {
     const data = { url: `${TEST_ORIGIN}/r/test` };
     writeFileSync(join(tempDir, "test.json"), JSON.stringify(data, null, 2) + "\n");
 
@@ -94,7 +90,7 @@ describe("rewriteOriginsInDir", () => {
     expect(content.url).toBe("https://local.dev/r/test");
   });
 
-  it("should not modify files without matching origin", () => {
+  it("does not modify files without matching origin", () => {
     const data = { url: "https://other.com/api" };
     writeFileSync(join(tempDir, "other.json"), JSON.stringify(data, null, 2) + "\n");
 
@@ -106,7 +102,7 @@ describe("rewriteOriginsInDir", () => {
     expect(result.changed).toBe(0);
   });
 
-  it("should handle nested directories", () => {
+  it("handles nested directories", () => {
     mkdirSync(join(tempDir, "sub"), { recursive: true });
     writeFileSync(
       join(tempDir, "sub", "nested.json"),
@@ -123,7 +119,7 @@ describe("rewriteOriginsInDir", () => {
 });
 
 describe("rewriteOriginsInContent", () => {
-  it("should replace origins in plain text", () => {
+  it("replaces origins in plain text", () => {
     const result = rewriteOriginsInContent(
       `Visit ${TEST_ORIGIN}/docs for more`,
       { fromOrigin: TEST_ORIGIN, toOrigin: "https://staging.dev" },

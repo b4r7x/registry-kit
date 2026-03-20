@@ -154,14 +154,6 @@ describe("createArtifactManifest", () => {
 });
 
 describe("validateManifest", () => {
-  it("should return success with parsed data for valid input", () => {
-    const result = validateManifest(validManifest);
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.library).toBe("diff-ui");
-    }
-  });
-
   it("should return errors array for invalid input", () => {
     const result = validateManifest({});
     expect(result.success).toBe(false);

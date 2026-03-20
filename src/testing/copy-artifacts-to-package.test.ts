@@ -1,18 +1,29 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, afterEach } from "vitest";
 import {
   mkdtempSync,
   mkdirSync,
   writeFileSync,
   existsSync,
   readFileSync,
+  rmSync,
 } from "node:fs";
 import { join } from "node:path";
 import { tmpdir } from "node:os";
 import { copyArtifactsToPackage } from "../artifacts.js";
 
+const tempDirs: string[] = [];
+
 function createTempDir(): string {
-  return mkdtempSync(join(tmpdir(), "rk-copy-pkg-"));
+  const dir = mkdtempSync(join(tmpdir(), "rk-copy-pkg-"));
+  tempDirs.push(dir);
+  return dir;
 }
+
+afterEach(() => {
+  for (const dir of tempDirs.splice(0)) {
+    rmSync(dir, { recursive: true, force: true });
+  }
+});
 
 function setupSourceArtifacts(root: string): string {
   const artifactsDir = join(root, "dist/artifacts");
@@ -42,21 +53,7 @@ describe("copyArtifactsToPackage", () => {
     expect(readFileSync(join(target, "some-file.json"), "utf-8")).toBe('{"test": true}');
   });
 
-  it("throws when source artifacts directory does not exist", () => {
-    const sourceRoot = createTempDir();
-    const packageRoot = createTempDir();
-
-    expect(() =>
-      copyArtifactsToPackage({
-        sourceRoot,
-        packageRoot,
-        label: "test-lib",
-        rebuildHint: "pnpm build:artifacts",
-      }),
-    ).toThrow("test-lib artifacts not found");
-  });
-
-  it("includes rebuildHint in error message when provided", () => {
+  it("throws with label and rebuildHint when source artifacts directory does not exist", () => {
     const sourceRoot = createTempDir();
     const packageRoot = createTempDir();
 
@@ -67,7 +64,19 @@ describe("copyArtifactsToPackage", () => {
         label: "test-lib",
         rebuildHint: "pnpm --filter test-lib build:artifacts",
       }),
-    ).toThrow("pnpm --filter test-lib build:artifacts");
+    ).toThrow("test-lib artifacts not found");
+
+    // rebuildHint is included in the error message
+    try {
+      copyArtifactsToPackage({
+        sourceRoot,
+        packageRoot,
+        label: "test-lib",
+        rebuildHint: "pnpm --filter test-lib build:artifacts",
+      });
+    } catch (e) {
+      expect((e as Error).message).toContain("pnpm --filter test-lib build:artifacts");
+    }
   });
 
   it("throws when artifact-manifest.json is missing and validateManifest is true", () => {

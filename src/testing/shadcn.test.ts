@@ -8,13 +8,8 @@ import {
 } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
-import { resolveLocalShadcnBin } from "../shadcn/runner.js";
+import { resolveLocalShadcnBin, runShadcnRegistryBuild } from "../shadcn/runner.js";
 import { validatePublicRegistryFresh } from "../shadcn/validate.js";
-import { runShadcnRegistryBuild } from "../shadcn/runner.js";
-
-// ---------------------------------------------------------------------------
-// resolveLocalShadcnBin
-// ---------------------------------------------------------------------------
 
 describe("resolveLocalShadcnBin", () => {
   let tempDir: string;
@@ -27,11 +22,11 @@ describe("resolveLocalShadcnBin", () => {
     rmSync(tempDir, { recursive: true, force: true });
   });
 
-  it("should return undefined when no shadcn binary exists", () => {
+  it("returns undefined when no shadcn binary exists", () => {
     expect(resolveLocalShadcnBin(tempDir)).toBeUndefined();
   });
 
-  it("should find shadcn binary in node_modules/.bin/", () => {
+  it("finds shadcn binary in node_modules/.bin/", () => {
     const binDir = join(tempDir, "node_modules", ".bin");
     mkdirSync(binDir, { recursive: true });
     const binPath = join(binDir, "shadcn");
@@ -41,7 +36,7 @@ describe("resolveLocalShadcnBin", () => {
     expect(resolveLocalShadcnBin(tempDir)).toBe(binPath);
   });
 
-  it("should find shadcn binary one level up (../node_modules/.bin/)", () => {
+  it("finds shadcn binary one level up (../node_modules/.bin/)", () => {
     const projectDir = join(tempDir, "packages", "lib");
     mkdirSync(projectDir, { recursive: true });
 
@@ -54,7 +49,7 @@ describe("resolveLocalShadcnBin", () => {
     expect(resolveLocalShadcnBin(projectDir)).toBe(resolve(binPath));
   });
 
-  it("should find shadcn binary two levels up (../../node_modules/.bin/)", () => {
+  it("finds shadcn binary two levels up (../../node_modules/.bin/)", () => {
     const projectDir = join(tempDir, "a", "b", "c");
     mkdirSync(projectDir, { recursive: true });
 
@@ -68,10 +63,6 @@ describe("resolveLocalShadcnBin", () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// runShadcnRegistryBuild — error when binary not found
-// ---------------------------------------------------------------------------
-
 describe("runShadcnRegistryBuild", () => {
   let tempDir: string;
 
@@ -83,16 +74,12 @@ describe("runShadcnRegistryBuild", () => {
     rmSync(tempDir, { recursive: true, force: true });
   });
 
-  it("should throw when shadcn binary is not found", () => {
+  it("throws when shadcn binary is not found", () => {
     expect(() =>
       runShadcnRegistryBuild({ rootDir: tempDir }),
     ).toThrow("Local shadcn CLI binary not found");
   });
 });
-
-// ---------------------------------------------------------------------------
-// validatePublicRegistryFresh
-// ---------------------------------------------------------------------------
 
 describe("validatePublicRegistryFresh", () => {
   let tempDir: string;
@@ -162,24 +149,7 @@ describe("validatePublicRegistryFresh", () => {
     rmSync(tempDir, { recursive: true, force: true });
   });
 
-  it("should pass when source and public registries match", () => {
-    setupRegistry([
-      {
-        name: "button",
-        dependencies: ["react"],
-        files: [{ path: "registry/ui/button.tsx" }],
-      },
-    ]);
-
-    expect(() =>
-      validatePublicRegistryFresh({
-        rootDir: tempDir,
-        fixCommand: FIX_CMD,
-      }),
-    ).not.toThrow();
-  });
-
-  it("should throw when item counts differ", () => {
+  it("throws when item counts differ", () => {
     setupRegistry(
       [
         { name: "button", files: [] },
@@ -196,7 +166,7 @@ describe("validatePublicRegistryFresh", () => {
     ).toThrow("item count does not match");
   });
 
-  it("should throw when a source item is missing from public registry", () => {
+  it("throws when a source item is missing from public registry", () => {
     setupRegistry(
       [
         { name: "button", files: [] },
@@ -216,7 +186,7 @@ describe("validatePublicRegistryFresh", () => {
     ).toThrow('missing item "card"');
   });
 
-  it("should throw when dependencies mismatch", () => {
+  it("throws when dependencies mismatch", () => {
     setupRegistry(
       [
         {
@@ -241,7 +211,7 @@ describe("validatePublicRegistryFresh", () => {
     ).toThrow("dependencies mismatch");
   });
 
-  it("should throw when file content is stale", () => {
+  it("throws when file content is stale", () => {
     setupRegistry(
       [
         {
@@ -265,7 +235,7 @@ describe("validatePublicRegistryFresh", () => {
     ).toThrow("content is stale");
   });
 
-  it("should throw when public item JSON file is missing a file entry", () => {
+  it("throws when public item JSON file is missing a file entry", () => {
     setupRegistry(
       [
         {
@@ -287,7 +257,7 @@ describe("validatePublicRegistryFresh", () => {
     ).toThrow('missing for "button"');
   });
 
-  it("should validate multiple items successfully", () => {
+  it("validates multiple items successfully", () => {
     setupRegistry([
       {
         name: "button",

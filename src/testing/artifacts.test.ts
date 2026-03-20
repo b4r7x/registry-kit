@@ -111,20 +111,17 @@ describe("buildRegistryArtifacts", () => {
 
   it("calls beforeBuild callback before processing", () => {
     const root = createTempRoot();
-    const calls: string[] = [];
+    let called = false;
 
     buildRegistryArtifacts({
       rootDir: root,
       manifest: createMinimalManifest(),
       defaultOrigin: "https://example.com",
       inputs: [],
-      beforeBuild: () => {
-        calls.push("beforeBuild");
-      },
-      copyDirs: [],
+      beforeBuild: () => { called = true; },
     });
 
-    expect(calls).toContain("beforeBuild");
+    expect(called).toBe(true);
   });
 
   it("calls afterCopy callback after copying", () => {

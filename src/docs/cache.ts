@@ -29,15 +29,11 @@ export function computeSyncFingerprint(
   return hash.digest("hex");
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
-}
-
 export function readSyncState(stateFilePath: string): SyncState | null {
   if (!existsSync(stateFilePath)) return null;
   try {
     const parsed = JSON.parse(readFileSync(stateFilePath, "utf-8"));
-    if (!isRecord(parsed)) return null;
+    if (typeof parsed !== "object" || parsed === null) return null;
     if (typeof parsed.fingerprint !== "string") return null;
     if (typeof parsed.origin !== "string") return null;
     if (typeof parsed.syncedAt !== "string") return null;

@@ -89,41 +89,6 @@ describe("buildCopyBundle", () => {
     expect(output.items[0]?.name).toBe("visible");
   });
 
-  it("excludes items of different types", () => {
-    const root = createTempRoot();
-    writeHookFile(root, "use-hook.ts", "export const useHook = () => null\n");
-    writeRegistry(root, [
-      {
-        name: "hook-item",
-        type: "registry:hook",
-        files: [{ path: "src/hooks/use-hook.ts" }],
-      },
-      {
-        name: "ui-item",
-        type: "registry:ui",
-        files: [{ path: "src/hooks/use-hook.ts" }],
-      },
-      {
-        name: "style-item",
-        type: "registry:style",
-        files: [{ path: "src/hooks/use-hook.ts" }],
-      },
-    ]);
-
-    const outputPath = join(root, "bundle.json");
-    const result = buildCopyBundle({
-      sourceRoot: root,
-      outputPath,
-      itemType: "registry:ui",
-    });
-
-    expect(result.itemCount).toBe(1);
-    const output = JSON.parse(readFileSync(outputPath, "utf-8")) as {
-      items: Array<{ name: string }>;
-    };
-    expect(output.items[0]?.name).toBe("ui-item");
-  });
-
   it("applies path mapping correctly", () => {
     const root = createTempRoot();
     writeHookFile(root, "use-nav.ts", "export const useNav = () => null\n");

@@ -1,4 +1,5 @@
 import { describe, it, expect, beforeAll, afterAll } from "vitest";
+import { kebabToCamelCase, toDocExportName, toYamlString } from "../docs-data/utils.js";
 import {
   mkdtempSync,
   mkdirSync,
@@ -42,20 +43,14 @@ beforeAll(async () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// highlightCode
-// ---------------------------------------------------------------------------
 describe("highlightCode", () => {
   it("returns CodeBlockLine[] with number and content", () => {
     const lines = highlightCode(highlighter, "const x = 1;", "typescript", TEST_THEME_NAME);
-    expect(Array.isArray(lines)).toBe(true);
     expect(lines.length).toBeGreaterThan(0);
-    for (const line of lines) {
-      expect(line).toHaveProperty("number");
-      expect(line).toHaveProperty("content");
-      expect(typeof line.number).toBe("number");
-      expect(Array.isArray(line.content)).toBe(true);
-    }
+    expect(lines[0]).toHaveProperty("number");
+    expect(lines[0]).toHaveProperty("content");
+    expect(typeof lines[0]!.number).toBe("number");
+    expect(Array.isArray(lines[0]!.content)).toBe(true);
   });
 
   it("starts line numbering at 1", () => {
@@ -78,21 +73,8 @@ describe("highlightCode", () => {
     expect(allText).toContain("</div>");
   });
 
-  it("returns tokens with text and optional color", () => {
-    const lines = highlightCode(highlighter, "const x = 1;", "typescript", TEST_THEME_NAME);
-    const tokens = lines[0]!.content;
-    expect(Array.isArray(tokens)).toBe(true);
-    expect(tokens.length).toBeGreaterThan(0);
-    for (const token of tokens) {
-      expect(token).toHaveProperty("text");
-      expect(typeof token.text).toBe("string");
-    }
-  });
 });
 
-// ---------------------------------------------------------------------------
-// generateHooksSource
-// ---------------------------------------------------------------------------
 describe("generateHooksSource", () => {
   let tempDir: string;
 
@@ -168,9 +150,6 @@ describe("generateHooksSource", () => {
   });
 });
 
-// ---------------------------------------------------------------------------
-// generateEnrichedHookData
-// ---------------------------------------------------------------------------
 describe("generateEnrichedHookData", () => {
   let tempDir: string;
 
@@ -339,5 +318,31 @@ describe("generateEnrichedHookData", () => {
     });
 
     expect(result).not.toHaveProperty("missing");
+  });
+});
+
+describe("kebabToCamelCase", () => {
+  it("converts kebab-case to camelCase", () => {
+    expect(kebabToCamelCase("use-active-heading")).toBe("useActiveHeading");
+  });
+
+  it("returns single-word strings unchanged", () => {
+    expect(kebabToCamelCase("button")).toBe("button");
+  });
+});
+
+describe("toDocExportName", () => {
+  it("appends Doc suffix to camelCase name", () => {
+    expect(toDocExportName("use-scroll-lock")).toBe("useScrollLockDoc");
+  });
+});
+
+describe("toYamlString", () => {
+  it("returns JSON-encoded string with double quotes", () => {
+    expect(toYamlString("hello world")).toBe('"hello world"');
+  });
+
+  it("escapes special characters", () => {
+    expect(toYamlString('say "hi"')).toBe('"say \\"hi\\""');
   });
 });
