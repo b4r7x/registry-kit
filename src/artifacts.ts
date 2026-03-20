@@ -70,9 +70,7 @@ export function buildRegistryArtifacts(options: BuildRegistryArtifactsOptions): 
   } = options;
   const inputs = options.inputs ?? manifest.inputs ?? [];
 
-  if (typeof beforeBuild === "function") {
-    beforeBuild();
-  }
+  beforeBuild?.();
 
   if (ensurePublicRegistryOptions) {
     ensurePublicRegistryReady({
@@ -110,9 +108,7 @@ export function buildRegistryArtifacts(options: BuildRegistryArtifactsOptions): 
     });
   }
 
-  if (typeof afterCopy === "function") {
-    afterCopy({ rootDir, artifactRoot: artifactRootPath, origin });
-  }
+  afterCopy?.({ rootDir, artifactRoot: artifactRootPath, origin });
 
   const fingerprint = computeInputsFingerprint(rootDir, inputs);
   const manifestPath = resolve(artifactRootPath, manifestFile);

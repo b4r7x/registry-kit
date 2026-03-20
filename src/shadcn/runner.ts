@@ -46,8 +46,6 @@ export function runShadcnRegistryBuild(options: RunShadcnRegistryBuildOptions): 
   resetDir(resolve(rootDir, outputDir));
   run(localBin, args, rootDir);
 
-  // shadcn build does not emit a registry.json index file; copy source registry
-  // into public/r/ so downstream validators and artifact consumers find it.
   const sourceRegistryPath = resolve(rootDir, registryPath);
   const publicRegistryIndexPath = resolve(rootDir, outputDir, "registry.json");
   copyFileSync(sourceRegistryPath, publicRegistryIndexPath);

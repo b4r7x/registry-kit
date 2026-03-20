@@ -1,4 +1,3 @@
-// Producer side (library build scripts)
 export { buildRegistryArtifacts, copyArtifactsToPackage } from "./artifacts.js";
 export type { CopyArtifactsToPackageOptions } from "./artifacts.js";
 export {
@@ -9,11 +8,9 @@ export {
   resolveLocalShadcnBin,
 } from "./shadcn/index.js";
 
-// Consumer side (docs host / artifact loading)
 export { loadArtifactsFromPackage } from "./artifact-loader.js";
 export type { LoadedArtifacts, LoadFromPackageOptions } from "./artifact-loader.js";
 
-// Consumer side (docs host / artifact sync)
 export { syncDocsFromArtifacts } from "./docs/index.js";
 export { resolveSyncOutputPaths } from "./docs/paths.js";
 export type {
@@ -26,11 +23,9 @@ export type {
 } from "./docs/types.js";
 export { DEFAULT_OUTPUT_PATHS } from "./docs/types.js";
 
-// Manifest validation & factory
 export { validateManifest, ArtifactManifestSchema, createArtifactManifest } from "./manifest.js";
 export type { CreateArtifactManifestOptions } from "./manifest.js";
 
-// Shared utilities
 export { ARTIFACT_MANIFEST_FILENAME, ARTIFACT_FINGERPRINT_FILENAME, ARTIFACT_MANIFEST_REL_PATH, DEFAULT_ARTIFACT_ROOT, DEFAULT_REGISTRY_ORIGIN } from "./constants.js";
 export { computeInputsFingerprint } from "./fingerprint.js";
 export { buildCopyBundle } from "./copy-bundle.js";
@@ -49,7 +44,6 @@ export {
 export { ensureExists, resetDir, collectAllFiles, collectJsonFiles, relativePath } from "./utils/fs.js";
 export { readJson, writeJson } from "./utils/json.js";
 
-// Docs data types
 export type {
   DocNote,
   ExampleRef,
@@ -63,7 +57,6 @@ export type {
   EnrichedHookData,
 } from "./docs-data/index.js";
 
-// Docs data utilities
 export {
   createDocsHighlighter,
   highlightCode,
@@ -84,10 +77,8 @@ export type {
   GenerateEnrichedHookDataOptions,
 } from "./docs-data/index.js";
 
-// Registry types
 export type { RegistryFile, RegistryItem, Registry } from "./registry-types.js";
 
-// Re-export all types
 export type * from "./types.js";
 export { defaultLogger } from "./logger.js";
 export type { Logger } from "./logger.js";

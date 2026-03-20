@@ -10,11 +10,6 @@ import { resolveSyncOutputPaths } from "./paths.js";
 import { defaultLogger } from "../logger.js";
 import type { SyncDocsOptions, SyncDocsResult } from "./types.js";
 
-/**
- * Syncs artifacts from multiple libraries into a docs host.
- * Handles loading (workspace or npm), fingerprint caching,
- * primary/secondary library distinction, and origin assertion.
- */
 export function syncDocsFromArtifacts(options: SyncDocsOptions): SyncDocsResult {
   const {
     docsRoot,
@@ -71,7 +66,6 @@ export function syncDocsFromArtifacts(options: SyncDocsOptions): SyncDocsResult 
   return { synced: true, fingerprint: syncFingerprint, artifacts };
 }
 
-// Re-export all public types
 export type {
   SyncDocsOptions,
   SyncDocsResult,

@@ -8,7 +8,6 @@ import type {
   HookDoc,
 } from "./types.js";
 
-/** Minimal registry item shape used by hook source generation. */
 export interface HookRegistryItem {
   name: string;
   title?: string;
@@ -16,7 +15,6 @@ export interface HookRegistryItem {
   files: Array<{ path: string }>;
 }
 
-/** Options for generating basic hook source data. */
 export interface GenerateHooksSourceOptions {
   items: HookRegistryItem[];
   rootDir: string;
@@ -25,18 +23,11 @@ export interface GenerateHooksSourceOptions {
   lang?: HighlightLanguage;
 }
 
-/** Options for generating enriched hook data. */
 export interface GenerateEnrichedHookDataOptions extends GenerateHooksSourceOptions {
-  /** Function to load HookDoc for a given hook name. Returns null if no doc exists. */
   loadHookDoc: (hookName: string) => Promise<HookDoc | null>;
-  /** Root directory containing example subdirectories per hook. */
   examplesDir?: string;
 }
 
-/**
- * Reads hook source files and returns highlighted source data keyed by hook name.
- * This is the basic version — backward-compatible with existing keyscope-hooks.json format.
- */
 export function generateHooksSource(
   options: GenerateHooksSourceOptions
 ): Record<string, HookSourceData> {
@@ -47,7 +38,7 @@ export function generateHooksSource(
     for (const file of item.files) {
       const hookPath = resolve(rootDir, file.path);
       if (!existsSync(hookPath)) {
-        console.warn(`  Hook file not found: ${file.path}`);
+        console.warn(`Hook file not found: ${file.path}`);
         continue;
       }
 
@@ -67,10 +58,6 @@ export function generateHooksSource(
   return data;
 }
 
-/**
- * Generates enriched hook data by merging registry items with HookDoc metadata,
- * usage snippets, and example source code.
- */
 export async function generateEnrichedHookData(
   options: GenerateEnrichedHookDataOptions
 ): Promise<Record<string, EnrichedHookData>> {

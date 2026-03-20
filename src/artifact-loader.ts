@@ -18,16 +18,10 @@ export interface LoadedArtifacts {
 
 export interface LoadFromPackageOptions {
   packageName: string;
-  /** Relative path within the package to the manifest. Defaults to `dist/artifacts/artifact-manifest.json`. */
   manifestRelPath?: string;
-  /** Optional require context directory. Defaults to `process.cwd()`. */
   from?: string;
 }
 
-/**
- * Loads and validates artifacts from an npm-installed package.
- * Resolves the package via Node's module resolution.
- */
 export function loadArtifactsFromPackage(
   options: LoadFromPackageOptions,
 ): LoadedArtifacts {

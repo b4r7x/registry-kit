@@ -10,7 +10,6 @@ import { writeJson } from "../utils/json.js";
 import { defaultLogger, type Logger } from "../logger.js";
 import type { LoadedLibraryArtifacts, AfterSyncContext, SyncOutputPaths } from "./types.js";
 
-/** Asserts that no references to `sourceOrigin` remain in registry output after rewriting. */
 function assertNoUnrewrittenOrigin(dir: string, targetOrigin: string, sourceOrigin: string): void {
   if (targetOrigin === sourceOrigin) return;
 
@@ -43,29 +42,28 @@ function syncPrimaryArtifacts(
   const generatedSourceDirRel = primaryArtifact.manifest.docs.generatedDir;
   const registrySourceDirRel = primaryArtifact.manifest.source?.registryDir;
   const stylesSourceDirRel = primaryArtifact.manifest.source?.stylesDir;
-  const missingFields: string[] = [];
 
-  if (!generatedSourceDirRel) missingFields.push("docs.generatedDir");
-  if (!registrySourceDirRel) missingFields.push("source.registryDir");
-  if (!stylesSourceDirRel) missingFields.push("source.stylesDir");
-
-  if (missingFields.length > 0) {
+  if (!generatedSourceDirRel || !registrySourceDirRel || !stylesSourceDirRel) {
+    const missing: string[] = [];
+    if (!generatedSourceDirRel) missing.push("docs.generatedDir");
+    if (!registrySourceDirRel) missing.push("source.registryDir");
+    if (!stylesSourceDirRel) missing.push("source.stylesDir");
     throw new Error(
-      `${primaryArtifact.id} manifest missing required primary sync fields: ${missingFields.join(", ")}`,
+      `${primaryArtifact.id} manifest missing required primary sync fields: ${missing.join(", ")}`,
     );
   }
 
   const artGeneratedDir = resolve(
     primaryArtifact.artifactRoot,
-    generatedSourceDirRel!,
+    generatedSourceDirRel,
   );
   const artRegistryDir = resolve(
     primaryArtifact.artifactRoot,
-    registrySourceDirRel!,
+    registrySourceDirRel,
   );
   const artStylesDir = resolve(
     primaryArtifact.artifactRoot,
-    stylesSourceDirRel!,
+    stylesSourceDirRel,
   );
 
   ensureExists(artGeneratedDir, `${primaryArtifact.id} artifact generated data`);

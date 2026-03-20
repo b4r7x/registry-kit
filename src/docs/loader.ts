@@ -1,6 +1,5 @@
 import { readFileSync } from "node:fs";
-import { resolve } from "node:path";
-import { basename } from "node:path";
+import { basename, resolve } from "node:path";
 import { ARTIFACT_MANIFEST_REL_PATH } from "../constants.js";
 import { loadArtifactsFromPackage } from "../artifact-loader.js";
 import { computeInputsFingerprint } from "../fingerprint.js";
@@ -12,9 +11,7 @@ import type { LoadedLibraryArtifacts, SyncLibraryConfig } from "./types.js";
 
 function getManifestGeneratedFiles(manifest: ArtifactManifest): string[] {
   if (!manifest.generated) return [];
-  return Object.values(manifest.generated).filter(
-    (value): value is string => typeof value === "string",
-  );
+  return Object.values(manifest.generated);
 }
 
 function assertUniqueGeneratedOutputNames(

@@ -78,9 +78,7 @@ export function buildShadcnRegistryWithOrigin(options: BuildShadcnRegistryWithOr
     beforeBuild,
   } = options;
 
-  if (typeof beforeBuild === "function") {
-    beforeBuild();
-  }
+  beforeBuild?.();
 
   runShadcnRegistryBuild({ rootDir, registryPath, outputDir });
 

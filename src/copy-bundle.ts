@@ -3,8 +3,6 @@ import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { z } from "zod";
 
-// ── Generic Copy Bundle ──────────────────────────────────────────────
-
 const RegistrySchema = z.object({
   items: z.array(z.object({
     name: z.string(),
@@ -41,9 +39,7 @@ export interface BuildCopyBundleOptions {
   sourceRoot: string;
   outputPath: string;
   registryPath?: string;
-  /** Filter items by type (e.g., "registry:hook", "registry:ui"). */
   itemType: string;
-  /** Path prefix mapping: source prefix → output prefix. */
   pathMapping?: { from: string; to: string };
 }
 
