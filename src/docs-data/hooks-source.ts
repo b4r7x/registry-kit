@@ -37,10 +37,7 @@ export function generateHooksSource(
   for (const item of items) {
     for (const file of item.files) {
       const hookPath = resolve(rootDir, file.path);
-      if (!existsSync(hookPath)) {
-        console.warn(`Hook file not found: ${file.path}`);
-        continue;
-      }
+      if (!existsSync(hookPath)) continue;
 
       const raw = readFileSync(hookPath, "utf-8");
       data[item.name] = {
@@ -77,10 +74,7 @@ export async function generateEnrichedHookData(
     const file = item.files[0];
     if (!file?.path) continue;
     const hookPath = resolve(rootDir, file.path);
-    if (!existsSync(hookPath)) {
-      console.warn(`  Hook file not found: ${file.path}`);
-      continue;
-    }
+    if (!existsSync(hookPath)) continue;
 
     const raw = readFileSync(hookPath, "utf-8");
     const highlighted = highlightCode(highlighter, raw, lang, themeName);

@@ -141,26 +141,16 @@ describe("shouldSkipSync", () => {
     rmSync(tempDir, { recursive: true, force: true });
   });
 
-  function createPaths(): SyncOutputPaths {
-    const contentDir = join(tempDir, "content");
-    const registryDir = join(tempDir, "registry");
-    const stylesDir = join(tempDir, "styles");
-    const publicRegistryDir = join(tempDir, "public-r");
-    const generatedDir = join(tempDir, "generated");
-    const libraryAssetsDir = join(tempDir, "assets");
-    return {
-      contentDir,
-      generatedDir,
-      registryDir,
-      stylesDir,
-      publicRegistryDir,
-      libraryAssetsDir,
+  it("returns false when sync state is null", () => {
+    const paths: SyncOutputPaths = {
+      contentDir: join(tempDir, "content"),
+      generatedDir: join(tempDir, "generated"),
+      registryDir: join(tempDir, "registry"),
+      stylesDir: join(tempDir, "styles"),
+      publicRegistryDir: join(tempDir, "public-r"),
+      libraryAssetsDir: join(tempDir, "assets"),
       stateFilePath: join(tempDir, "state.json"),
     };
-  }
-
-  it("returns false when sync state is null", () => {
-    const paths = createPaths();
     expect(
       shouldSkipSync({
         syncState: null,
@@ -172,7 +162,15 @@ describe("shouldSkipSync", () => {
   });
 
   it("returns false when fingerprint differs", () => {
-    const paths = createPaths();
+    const paths: SyncOutputPaths = {
+      contentDir: join(tempDir, "content"),
+      generatedDir: join(tempDir, "generated"),
+      registryDir: join(tempDir, "registry"),
+      stylesDir: join(tempDir, "styles"),
+      publicRegistryDir: join(tempDir, "public-r"),
+      libraryAssetsDir: join(tempDir, "assets"),
+      stateFilePath: join(tempDir, "state.json"),
+    };
     const state: SyncState = {
       fingerprint: "old",
       origin: "https://example.com",
@@ -189,7 +187,15 @@ describe("shouldSkipSync", () => {
   });
 
   it("returns true when fingerprint matches and all outputs exist", () => {
-    const paths = createPaths();
+    const paths: SyncOutputPaths = {
+      contentDir: join(tempDir, "content"),
+      generatedDir: join(tempDir, "generated"),
+      registryDir: join(tempDir, "registry"),
+      stylesDir: join(tempDir, "styles"),
+      publicRegistryDir: join(tempDir, "public-r"),
+      libraryAssetsDir: join(tempDir, "assets"),
+      stateFilePath: join(tempDir, "state.json"),
+    };
     mkdirSync(paths.contentDir, { recursive: true });
     writeFileSync(join(paths.contentDir, "meta.json"), "{}");
     mkdirSync(paths.registryDir, { recursive: true });

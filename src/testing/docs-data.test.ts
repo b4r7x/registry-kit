@@ -47,10 +47,8 @@ describe("highlightCode", () => {
   it("returns CodeBlockLine[] with number and content", () => {
     const lines = highlightCode(highlighter, "const x = 1;", "typescript", TEST_THEME_NAME);
     expect(lines.length).toBeGreaterThan(0);
-    expect(lines[0]).toHaveProperty("number");
-    expect(lines[0]).toHaveProperty("content");
-    expect(typeof lines[0]!.number).toBe("number");
-    expect(Array.isArray(lines[0]!.content)).toBe(true);
+    const allText = lines.flatMap((l) => l.content.map((t) => t.text)).join("");
+    expect(allText).toContain("const");
   });
 
   it("starts line numbering at 1", () => {

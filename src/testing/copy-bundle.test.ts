@@ -23,9 +23,10 @@ function writeHookFile(root: string, name: string, content: string): void {
 }
 
 describe("buildCopyBundle", () => {
-  it("builds a copy bundle with correct item type filtering", () => {
+  it("filters by item type, excludes hidden, applies path mapping, and generates integrity", () => {
     const root = createTempRoot();
     writeHookFile(root, "use-alpha.ts", "export const useAlpha = () => null\n");
+    writeHookFile(root, "use-hidden.ts", "export const useHidden = () => null\n");
     writeRegistry(root, [
       {
         name: "alpha",
@@ -36,35 +37,6 @@ describe("buildCopyBundle", () => {
         name: "button",
         type: "registry:ui",
         files: [{ path: "src/hooks/use-alpha.ts" }],
-      },
-    ]);
-
-    const outputPath = join(root, "bundle.json");
-    const result = buildCopyBundle({
-      sourceRoot: root,
-      outputPath,
-      itemType: "registry:hook",
-      pathMapping: { from: "src/hooks/", to: "hooks/" },
-    });
-
-    const output = JSON.parse(readFileSync(outputPath, "utf-8")) as {
-      items: Array<{ name: string }>;
-    };
-
-    expect(result.itemCount).toBe(1);
-    expect(output.items).toHaveLength(1);
-    expect(output.items[0]?.name).toBe("alpha");
-  });
-
-  it("excludes hidden items", () => {
-    const root = createTempRoot();
-    writeHookFile(root, "use-visible.ts", "export const useVisible = () => null\n");
-    writeHookFile(root, "use-hidden.ts", "export const useHidden = () => null\n");
-    writeRegistry(root, [
-      {
-        name: "visible",
-        type: "registry:hook",
-        files: [{ path: "src/hooks/use-visible.ts" }],
       },
       {
         name: "hidden",
@@ -82,56 +54,18 @@ describe("buildCopyBundle", () => {
       pathMapping: { from: "src/hooks/", to: "hooks/" },
     });
 
+    // Filters by type and excludes hidden
     expect(result.itemCount).toBe(1);
     const output = JSON.parse(readFileSync(outputPath, "utf-8")) as {
-      items: Array<{ name: string }>;
+      items: Array<{ name: string; files: Array<{ path: string }> }>;
     };
-    expect(output.items[0]?.name).toBe("visible");
-  });
+    expect(output.items).toHaveLength(1);
+    expect(output.items[0]?.name).toBe("alpha");
 
-  it("applies path mapping correctly", () => {
-    const root = createTempRoot();
-    writeHookFile(root, "use-nav.ts", "export const useNav = () => null\n");
-    writeRegistry(root, [
-      {
-        name: "nav",
-        type: "registry:hook",
-        files: [{ path: "src/hooks/use-nav.ts" }],
-      },
-    ]);
+    // Path mapping applied
+    expect(output.items[0]?.files[0]?.path).toBe("hooks/use-alpha.ts");
 
-    const outputPath = join(root, "bundle.json");
-    buildCopyBundle({
-      sourceRoot: root,
-      outputPath,
-      itemType: "registry:hook",
-      pathMapping: { from: "src/hooks/", to: "hooks/" },
-    });
-
-    const output = JSON.parse(readFileSync(outputPath, "utf-8")) as {
-      items: Array<{ files: Array<{ path: string }> }>;
-    };
-    expect(output.items[0]?.files[0]?.path).toBe("hooks/use-nav.ts");
-  });
-
-  it("generates SHA-256 integrity hash", () => {
-    const root = createTempRoot();
-    writeHookFile(root, "use-test.ts", "export const useTest = () => null\n");
-    writeRegistry(root, [
-      {
-        name: "test",
-        type: "registry:hook",
-        files: [{ path: "src/hooks/use-test.ts" }],
-      },
-    ]);
-
-    const outputPath = join(root, "bundle.json");
-    const result = buildCopyBundle({
-      sourceRoot: root,
-      outputPath,
-      itemType: "registry:hook",
-    });
-
+    // SHA-256 integrity hash
     expect(result.integrity).toMatch(/^sha256-[a-f0-9]{64}$/);
   });
 

@@ -33,7 +33,6 @@ export function readSyncState(stateFilePath: string): SyncState | null {
   if (!existsSync(stateFilePath)) return null;
   try {
     const parsed = JSON.parse(readFileSync(stateFilePath, "utf-8"));
-    if (typeof parsed !== "object" || parsed === null) return null;
     if (typeof parsed.fingerprint !== "string") return null;
     if (typeof parsed.origin !== "string") return null;
     if (typeof parsed.syncedAt !== "string") return null;

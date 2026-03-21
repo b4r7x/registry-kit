@@ -26,7 +26,7 @@ export { DEFAULT_OUTPUT_PATHS } from "./docs/types.js";
 export { validateManifest, ArtifactManifestSchema, createArtifactManifest } from "./manifest.js";
 export type { CreateArtifactManifestOptions } from "./manifest.js";
 
-export { ARTIFACT_MANIFEST_FILENAME, ARTIFACT_FINGERPRINT_FILENAME, ARTIFACT_MANIFEST_REL_PATH, DEFAULT_ARTIFACT_ROOT, DEFAULT_REGISTRY_ORIGIN } from "./constants.js";
+export { ARTIFACT_MANIFEST_FILENAME, ARTIFACT_FINGERPRINT_FILENAME, ARTIFACT_MANIFEST_REL_PATH, DEFAULT_ARTIFACT_ROOT } from "./constants.js";
 export { computeInputsFingerprint } from "./fingerprint.js";
 export { buildCopyBundle } from "./copy-bundle.js";
 export type {
@@ -37,12 +37,9 @@ export type {
 } from "./copy-bundle.js";
 export {
   normalizeOrigin,
-  rewriteOriginValue,
   rewriteOriginsInDir,
-  rewriteOriginsInContent,
 } from "./origin.js";
-export { ensureExists, resetDir, collectAllFiles, collectJsonFiles, relativePath } from "./utils/fs.js";
-export { readJson, writeJson } from "./utils/json.js";
+export { ensureExists, resetDir } from "./utils/fs.js";
 
 export type {
   DocNote,
