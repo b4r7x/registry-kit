@@ -97,7 +97,9 @@ export function buildRegistryArtifacts(options: BuildRegistryArtifactsOptions): 
     cpSync(from, to, {
       recursive: true,
       force: true,
-      filter: (src) => !/\.(md)$/i.test(src),
+      filter: (src) => !/\.(md)$/i.test(src)
+        && !/\.(test|spec)\.(ts|tsx|js|jsx)$/i.test(src)
+        && !src.includes("__tests__"),
     });
   }
 

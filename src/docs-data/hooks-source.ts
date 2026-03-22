@@ -1,5 +1,6 @@
-import { existsSync, readFileSync, readdirSync } from "node:fs";
-import { resolve, basename } from "node:path";
+import { existsSync, readFileSync } from "node:fs";
+import { resolve } from "node:path";
+import { findExamples } from "./examples.js";
 import { highlightCode, type DocsHighlighter, type HighlightLanguage } from "./highlight.js";
 import type {
   CodeBlockLine,
@@ -99,23 +100,18 @@ export async function generateEnrichedHookData(
     const exampleSource: Record<string, { raw: string; highlighted: CodeBlockLine[] }> = {};
 
     if (examplesDir) {
+      const exampleNames = findExamples(examplesDir, item.name);
       const hookExamplesDir = resolve(examplesDir, item.name);
-      if (existsSync(hookExamplesDir)) {
-        const exampleFiles = readdirSync(hookExamplesDir)
-          .filter((f) => f.endsWith(".tsx") || f.endsWith(".ts"))
-          .sort();
 
-        for (const ef of exampleFiles) {
-          const exampleName = basename(ef, ef.endsWith(".tsx") ? ".tsx" : ".ts");
-          const examplePath = resolve(hookExamplesDir, ef);
-          const exampleRaw = readFileSync(examplePath, "utf-8");
+      for (const exampleName of exampleNames) {
+        const examplePath = resolve(hookExamplesDir, `${exampleName}.tsx`);
+        const exampleRaw = readFileSync(examplePath, "utf-8");
 
-          examples.push(exampleName);
-          exampleSource[exampleName] = {
-            raw: exampleRaw,
-            highlighted: highlightCode(highlighter, exampleRaw, "tsx", themeName),
-          };
-        }
+        examples.push(exampleName);
+        exampleSource[exampleName] = {
+          raw: exampleRaw,
+          highlighted: highlightCode(highlighter, exampleRaw, "tsx", themeName),
+        };
       }
     }
 

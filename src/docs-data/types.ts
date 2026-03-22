@@ -38,6 +38,32 @@ export interface HookDoc {
   tags?: string[]
 }
 
+export interface AnatomyNode {
+  name: string
+  indent: number
+  note?: string
+}
+
+export interface ComponentNote {
+  title: string
+  content: string
+}
+
+export interface KeyboardSection {
+  description: string
+  examples: ExampleRef[]
+}
+
+export interface ComponentDoc {
+  description?: string
+  usage?: UsageSection
+  notes?: ComponentNote[]
+  examples?: ExampleRef[]
+  anatomy?: AnatomyNode[]
+  keyboard?: KeyboardSection | null
+  tags?: string[]
+}
+
 export interface CodeBlockToken {
   text: string
   color?: string

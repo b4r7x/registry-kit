@@ -196,6 +196,30 @@ export function runDocsSyncPass(params: {
       paths.generatedDir,
       paths.libraryAssetsDir,
     );
+
+    if (
+      artifact.id !== primaryArtifact.id &&
+      artifact.manifest.source?.registryDir
+    ) {
+      const artExamplesDir = resolve(
+        artifact.artifactRoot,
+        artifact.manifest.source.registryDir,
+        "examples",
+      );
+      if (existsSync(artExamplesDir)) {
+        const targetExamplesDir = resolve(
+          paths.registryDir,
+          "examples",
+          artifact.id,
+        );
+        mkdirSync(targetExamplesDir, { recursive: true });
+        cpSync(artExamplesDir, targetExamplesDir, { recursive: true });
+        logger.info(
+          `[docs-sync] Copied ${artifact.id} examples to registry/examples/${artifact.id}/`,
+        );
+      }
+    }
+
     afterSync?.({
       libraryId: artifact.id,
       generatedDir: resolve(paths.generatedDir, artifact.id),

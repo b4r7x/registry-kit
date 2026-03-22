@@ -9,6 +9,10 @@ export type {
   CodeBlockLine,
   HookSourceData,
   EnrichedHookData,
+  AnatomyNode,
+  ComponentNote,
+  KeyboardSection,
+  ComponentDoc,
 } from "./types.js"
 
 export {
@@ -33,3 +37,13 @@ export type {
 
 export { docsCodeTheme, DOCS_CODE_THEME_NAME } from "./code-theme.js"
 export { kebabToCamelCase, toDocExportName, toYamlString } from "./utils.js"
+export { findExamples, generateDemoIndex } from "./examples.js"
+export { buildDocsData } from "./build-docs-data.js"
+export type {
+  BuildDocsDataConfig,
+  BuildDocsDataResult,
+  HooksConfig,
+  DemoIndexConfig,
+  ComponentsConfig,
+  LibsConfig,
+} from "./build-docs-data.js"

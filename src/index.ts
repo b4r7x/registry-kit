@@ -52,6 +52,10 @@ export type {
   CodeBlockLine,
   HookSourceData,
   EnrichedHookData,
+  AnatomyNode,
+  ComponentNote,
+  KeyboardSection,
+  ComponentDoc,
 } from "./docs-data/index.js";
 
 export {
@@ -64,6 +68,9 @@ export {
   kebabToCamelCase,
   toDocExportName,
   toYamlString,
+  findExamples,
+  generateDemoIndex,
+  buildDocsData,
 } from "./docs-data/index.js";
 export type {
   HighlightLanguage,
@@ -72,6 +79,12 @@ export type {
   HookRegistryItem,
   GenerateHooksSourceOptions,
   GenerateEnrichedHookDataOptions,
+  BuildDocsDataConfig,
+  BuildDocsDataResult,
+  HooksConfig,
+  DemoIndexConfig,
+  ComponentsConfig,
+  LibsConfig,
 } from "./docs-data/index.js";
 
 export type { RegistryFile, RegistryItem, Registry } from "./registry-types.js";
