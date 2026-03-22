@@ -78,6 +78,12 @@ export interface BuildDocsDataConfig {
   demoIndex: DemoIndexConfig
   components?: ComponentsConfig
   libs?: LibsConfig
+  /**
+   * When true, skip generating thin MDX wrapper files for components and hooks.
+   * Use this when libraries have hand-authored rich MDX in their docs/content/ directories.
+   * JSON data, demo index, and meta.json are still generated.
+   */
+  skipMdxGeneration?: boolean
 }
 
 export interface BuildDocsDataResult {
@@ -117,6 +123,7 @@ export async function buildDocsData(config: BuildDocsDataConfig): Promise<BuildD
     demoIndex: demoIndexConfig,
     components: componentsConfig,
     libs: libsConfig,
+    skipMdxGeneration,
   } = config
 
   const errors: string[] = []
@@ -178,9 +185,8 @@ export async function buildDocsData(config: BuildDocsDataConfig): Promise<BuildD
       writeFileSync(resolve(outputDir, "component-list.json"), JSON.stringify(componentList, null, 2))
       console.log(`Wrote component-list.json (${componentList.length} entries)`)
 
-      // Component MDX pages
+      // Component MDX pages + meta.json
       mkdirSync(componentsConfig.contentDir, { recursive: true })
-      cleanDir(componentsConfig.contentDir, ".mdx")
 
       const componentPages = sortedItems.filter((item) => componentDataMap[item.name]).map((item) => item.name)
       writeFileSync(
@@ -188,15 +194,20 @@ export async function buildDocsData(config: BuildDocsDataConfig): Promise<BuildD
         JSON.stringify({ title: "Components", pages: componentPages }, null, 2),
       )
 
-      for (const item of sortedItems) {
-        if (!componentDataMap[item.name]) continue
-        const desc = (componentDataMap[item.name]?.description as string) ?? item.description ?? ""
-        writeFileSync(
-          resolve(componentsConfig.contentDir, `${item.name}.mdx`),
-          `---\ntitle: ${toYamlString(item.title ?? item.name)}\ndescription: ${toYamlString(desc)}\ncomponent: ${toYamlString(item.name)}\n---\n\n<ComponentDocPage name="${item.name}" />\n`,
-        )
+      if (!skipMdxGeneration) {
+        cleanDir(componentsConfig.contentDir, ".mdx")
+        for (const item of sortedItems) {
+          if (!componentDataMap[item.name]) continue
+          const desc = (componentDataMap[item.name]?.description as string) ?? item.description ?? ""
+          writeFileSync(
+            resolve(componentsConfig.contentDir, `${item.name}.mdx`),
+            `---\ntitle: ${toYamlString(item.title ?? item.name)}\ndescription: ${toYamlString(desc)}\ncomponent: ${toYamlString(item.name)}\n---\n\n<ComponentDocPage name="${item.name}" />\n`,
+          )
+        }
+        console.log(`Wrote ${componentPages.length} component MDX pages`)
+      } else {
+        console.log(`Skipped component MDX generation (${componentPages.length} components, hand-authored MDX)`)
       }
-      console.log(`Wrote ${componentPages.length} component MDX pages`)
     }
 
     // -------------------------------------------------------------------
@@ -249,17 +260,23 @@ export async function buildDocsData(config: BuildDocsDataConfig): Promise<BuildD
       writeFileSync(resolve(outputDir, "hook-list.json"), JSON.stringify(hookList, null, 2))
       console.log(`Wrote hook-list.json (${hookList.length} entries)`)
 
-      // Hook MDX pages
+      // Hook MDX pages + meta.json
       mkdirSync(hooksConfig.contentDir, { recursive: true })
-      cleanDir(hooksConfig.contentDir, ".mdx")
 
-      for (const hookData of Object.values(enrichedData)) {
-        const description = hookData.docs?.description ?? hookData.description ?? ""
-        writeFileSync(
-          resolve(hooksConfig.contentDir, `${hookData.name}.mdx`),
-          `---\ntitle: ${toYamlString(hookData.title)}\ndescription: ${toYamlString(description)}\nhook: ${toYamlString(hookData.name)}\n---\n\n<HookDocPage />\n`,
-        )
+      if (!skipMdxGeneration) {
+        cleanDir(hooksConfig.contentDir, ".mdx")
+        for (const hookData of Object.values(enrichedData)) {
+          const description = hookData.docs?.description ?? hookData.description ?? ""
+          writeFileSync(
+            resolve(hooksConfig.contentDir, `${hookData.name}.mdx`),
+            `---\ntitle: ${toYamlString(hookData.title)}\ndescription: ${toYamlString(description)}\nhook: ${toYamlString(hookData.name)}\n---\n\n<HookDocPage />\n`,
+          )
+        }
+        console.log(`Wrote ${hooksCount} hook MDX pages`)
+      } else {
+        console.log(`Skipped hook MDX generation (${hooksCount} hooks, hand-authored MDX)`)
       }
+
       const metaPages = Object.values(enrichedData)
         .sort((a, b) => a.name.localeCompare(b.name))
         .map((h) => h.name)
