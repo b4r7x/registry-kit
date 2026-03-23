@@ -68,6 +68,7 @@ export {
   kebabToCamelCase,
   toDocExportName,
   toYamlString,
+  createHookDocLoader,
   findExamples,
   generateDemoIndex,
   buildDocsData,

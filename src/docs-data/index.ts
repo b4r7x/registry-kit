@@ -36,7 +36,7 @@ export type {
 } from "./hooks-source.js"
 
 export { docsCodeTheme, DOCS_CODE_THEME_NAME } from "./code-theme.js"
-export { kebabToCamelCase, toDocExportName, toYamlString } from "./utils.js"
+export { kebabToCamelCase, toDocExportName, toYamlString, createHookDocLoader } from "./utils.js"
 export { findExamples, generateDemoIndex } from "./examples.js"
 export { buildDocsData } from "./build-docs-data.js"
 export type {
