@@ -2,11 +2,9 @@ import { createRequire } from "node:module";
 import { dirname, resolve } from "node:path";
 import { readFileSync } from "node:fs";
 import { ARTIFACT_MANIFEST_REL_PATH } from "./constants.js";
-import { validateManifest } from "./manifest.js";
-import { computeInputsFingerprint } from "./fingerprint.js";
+import { loadValidatedManifest } from "./manifest.js";
+import type { ArtifactManifest } from "./manifest.js";
 import { ensureExists } from "./utils/fs.js";
-import { readJson } from "./utils/json.js";
-import type { ArtifactManifest } from "./types.js";
 
 export interface LoadedArtifacts {
   manifest: ArtifactManifest;
@@ -45,15 +43,7 @@ export function loadArtifactsFromPackage(
   const manifestPath = resolve(packageDir, manifestRelPath);
   ensureExists(manifestPath, `${packageName} artifact manifest`);
 
-  const raw = readJson<Record<string, unknown>>(manifestPath);
-  const validation = validateManifest(raw);
-  if (!validation.success) {
-    throw new Error(
-      `${packageName} manifest validation failed:\n${validation.errors.join("\n")}`,
-    );
-  }
-
-  const manifest = validation.data;
+  const manifest = loadValidatedManifest(manifestPath, packageName);
   const artifactRoot = resolve(packageDir, manifest.artifactRoot);
   const fingerprintPath = resolve(
     artifactRoot,

@@ -19,7 +19,7 @@ describe("readJson", () => {
     const filePath = join(tempDir, "data.json");
     writeJson(filePath, { name: "test", count: 42 });
 
-    const result = readJson<{ name: string; count: number }>(filePath);
+    const result = readJson(filePath);
     expect(result).toEqual({ name: "test", count: 42 });
   });
 
@@ -52,7 +52,7 @@ describe("writeJson", () => {
     writeJson(filePath, { first: true });
     writeJson(filePath, { second: true });
 
-    const result = readJson<{ second: boolean }>(filePath);
+    const result = readJson(filePath);
     expect(result).toEqual({ second: true });
   });
 });

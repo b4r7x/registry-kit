@@ -46,7 +46,7 @@ export function syncDocsFromArtifacts(options: SyncDocsOptions): SyncDocsResult 
     syncSchemaVersion,
     artifacts,
   );
-  const syncState = readSyncState(paths.stateFilePath);
+  const syncState = readSyncState(paths.stateFilePath, logger);
 
   if (shouldSkipSync({ syncState, syncFingerprint, artifacts, paths })) {
     logger.info("[docs-sync] Artifacts unchanged; skipping sync.");
@@ -66,12 +66,3 @@ export function syncDocsFromArtifacts(options: SyncDocsOptions): SyncDocsResult 
   return { synced: true, fingerprint: syncFingerprint, artifacts };
 }
 
-export type {
-  SyncDocsOptions,
-  SyncDocsResult,
-  SyncLibraryConfig,
-  LoadedLibraryArtifacts,
-  AfterSyncContext,
-  SyncOutputPaths,
-  SyncState,
-} from "./types.js";

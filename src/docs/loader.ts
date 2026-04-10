@@ -3,10 +3,9 @@ import { basename, resolve } from "node:path";
 import { ARTIFACT_MANIFEST_REL_PATH } from "../constants.js";
 import { loadArtifactsFromPackage } from "../artifact-loader.js";
 import { computeInputsFingerprint } from "../fingerprint.js";
-import { validateManifest } from "../manifest.js";
+import { loadValidatedManifest } from "../manifest.js";
+import type { ArtifactManifest } from "../manifest.js";
 import { ensureExists } from "../utils/fs.js";
-import { readJson } from "../utils/json.js";
-import type { ArtifactManifest } from "../types.js";
 import type { LoadedLibraryArtifacts, SyncLibraryConfig } from "./types.js";
 
 function getManifestGeneratedFiles(manifest: ArtifactManifest): string[] {
@@ -100,15 +99,7 @@ function loadFromWorkspace(
   );
   ensureExists(manifestPath, `${config.id} artifact manifest`);
 
-  const raw = readJson<Record<string, unknown>>(manifestPath);
-  const validation = validateManifest(raw);
-  if (!validation.success) {
-    throw new Error(
-      `${config.id} manifest validation failed:\n${validation.errors.join("\n")}`,
-    );
-  }
-
-  const manifest = validation.data;
+  const manifest = loadValidatedManifest(manifestPath, config.id);
   const artifactRoot = resolve(libraryRoot, manifest.artifactRoot);
   const fingerprintPath = resolve(
     artifactRoot,

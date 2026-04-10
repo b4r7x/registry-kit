@@ -20,7 +20,7 @@ export function normalizeOrigin(raw: string | undefined | null, options: Normali
   return value.replace(/\/+$/, "");
 }
 
-export function rewriteOriginValue(value: unknown, options: OriginRewriteOptions): unknown {
+function rewriteOriginValue(value: unknown, options: OriginRewriteOptions): unknown {
   const { fromOrigin, toOrigin } = options;
 
   if (typeof value === "string") {
@@ -64,7 +64,18 @@ export function rewriteOriginsInDir(dir: string, options: OriginRewriteOptions):
   return { changed, total: files.length };
 }
 
-export function rewriteOriginsInContent(content: string, options: OriginRewriteOptions): string {
-  const { fromOrigin, toOrigin } = options;
-  return content.replaceAll(fromOrigin, toOrigin);
+// Not in the public barrel — only used by shadcn/build.ts
+export interface ResolveAndRewriteOriginOptions {
+  dir: string;
+  originRaw?: string;
+  defaultOrigin: string;
+  fromOrigin?: string;
+}
+
+// Not in the public barrel — only used by shadcn/build.ts
+export function resolveAndRewriteOrigin(options: ResolveAndRewriteOriginOptions): { origin: string; rewriteResult: RewriteOriginsResult } {
+  const { dir, originRaw, defaultOrigin, fromOrigin = defaultOrigin } = options;
+  const origin = normalizeOrigin(originRaw, { defaultOrigin });
+  const rewriteResult = rewriteOriginsInDir(dir, { fromOrigin, toOrigin: origin });
+  return { origin, rewriteResult };
 }

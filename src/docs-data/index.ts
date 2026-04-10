@@ -39,11 +39,13 @@ export { docsCodeTheme, DOCS_CODE_THEME_NAME } from "./code-theme.js"
 export { kebabToCamelCase, toDocExportName, toYamlString, createHookDocLoader } from "./utils.js"
 export { findExamples, generateDemoIndex } from "./examples.js"
 export { buildDocsData } from "./build-docs-data.js"
+export { buildComponentsData } from "./build-components.js"
+export { buildHooksData } from "./build-hooks.js"
 export type {
   BuildDocsDataConfig,
   BuildDocsDataResult,
-  HooksConfig,
   DemoIndexConfig,
-  ComponentsConfig,
   LibsConfig,
 } from "./build-docs-data.js"
+export type { ComponentsConfig } from "./build-components.js"
+export type { HooksConfig } from "./build-hooks.js"

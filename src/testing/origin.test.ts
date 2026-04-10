@@ -4,9 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import {
   normalizeOrigin,
-  rewriteOriginValue,
   rewriteOriginsInDir,
-  rewriteOriginsInContent,
 } from "../origin.js";
 
 const TEST_ORIGIN = "https://diffgazer.com";
@@ -22,46 +20,6 @@ describe("normalizeOrigin", () => {
 
   it("throws for non-http(s) origins", () => {
     expect(() => normalizeOrigin("ftp://nope.com", { defaultOrigin: TEST_ORIGIN })).toThrow();
-  });
-});
-
-describe("rewriteOriginValue", () => {
-  it("replaces origin in strings", () => {
-    const result = rewriteOriginValue(
-      `${TEST_ORIGIN}/r/diff-ui/button.json`,
-      { fromOrigin: TEST_ORIGIN, toOrigin: "https://localhost:3000" },
-    );
-    expect(result).toBe("https://localhost:3000/r/diff-ui/button.json");
-  });
-
-  it("handles nested objects recursively", () => {
-    const input = {
-      url: `${TEST_ORIGIN}/test`,
-      nested: { deep: `${TEST_ORIGIN}/deep` },
-    };
-    const result = rewriteOriginValue(input, {
-      fromOrigin: TEST_ORIGIN,
-      toOrigin: "https://new.com",
-    });
-    expect(result).toEqual({
-      url: "https://new.com/test",
-      nested: { deep: "https://new.com/deep" },
-    });
-  });
-
-  it("handles arrays", () => {
-    const result = rewriteOriginValue(
-      [`${TEST_ORIGIN}/a`, `${TEST_ORIGIN}/b`],
-      { fromOrigin: TEST_ORIGIN, toOrigin: "https://x.com" },
-    );
-    expect(result).toEqual(["https://x.com/a", "https://x.com/b"]);
-  });
-
-  it("passes through non-string/non-object values", () => {
-    const opts = { fromOrigin: TEST_ORIGIN, toOrigin: "https://x.com" };
-    expect(rewriteOriginValue(42, opts)).toBe(42);
-    expect(rewriteOriginValue(null, opts)).toBe(null);
-    expect(rewriteOriginValue(true, opts)).toBe(true);
   });
 });
 
@@ -116,14 +74,40 @@ describe("rewriteOriginsInDir", () => {
 
     expect(result.changed).toBe(1);
   });
-});
 
-describe("rewriteOriginsInContent", () => {
-  it("replaces origins in plain text", () => {
-    const result = rewriteOriginsInContent(
-      `Visit ${TEST_ORIGIN}/docs for more`,
-      { fromOrigin: TEST_ORIGIN, toOrigin: "https://staging.dev" },
-    );
-    expect(result).toBe("Visit https://staging.dev/docs for more");
+  it("handles nested objects and arrays recursively", () => {
+    const data = {
+      url: `${TEST_ORIGIN}/test`,
+      nested: { deep: `${TEST_ORIGIN}/deep` },
+      list: [`${TEST_ORIGIN}/a`, `${TEST_ORIGIN}/b`],
+    };
+    writeFileSync(join(tempDir, "complex.json"), JSON.stringify(data, null, 2) + "\n");
+
+    const result = rewriteOriginsInDir(tempDir, {
+      fromOrigin: TEST_ORIGIN,
+      toOrigin: "https://new.com",
+    });
+
+    expect(result.changed).toBe(1);
+    const content = JSON.parse(readFileSync(join(tempDir, "complex.json"), "utf-8"));
+    expect(content.url).toBe("https://new.com/test");
+    expect(content.nested.deep).toBe("https://new.com/deep");
+    expect(content.list).toEqual(["https://new.com/a", "https://new.com/b"]);
+  });
+
+  it("passes through non-string/non-object values unchanged", () => {
+    const data = { count: 42, active: true, empty: null, url: `${TEST_ORIGIN}/x` };
+    writeFileSync(join(tempDir, "mixed.json"), JSON.stringify(data, null, 2) + "\n");
+
+    rewriteOriginsInDir(tempDir, {
+      fromOrigin: TEST_ORIGIN,
+      toOrigin: "https://x.com",
+    });
+
+    const content = JSON.parse(readFileSync(join(tempDir, "mixed.json"), "utf-8"));
+    expect(content.count).toBe(42);
+    expect(content.active).toBe(true);
+    expect(content.empty).toBe(null);
+    expect(content.url).toBe("https://x.com/x");
   });
 });

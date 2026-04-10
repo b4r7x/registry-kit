@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { resolve } from "node:path";
-import { normalizeOrigin, rewriteOriginsInDir } from "../origin.js";
+import { resolveAndRewriteOrigin } from "../origin.js";
 import { resolveLocalShadcnBin, runShadcnRegistryBuild } from "./runner.js";
 import { validatePublicRegistryFresh } from "./validate.js";
 
@@ -82,10 +82,11 @@ export function buildShadcnRegistryWithOrigin(options: BuildShadcnRegistryWithOr
 
   runShadcnRegistryBuild({ rootDir, registryPath, outputDir });
 
-  const origin = normalizeOrigin(originRaw, { defaultOrigin });
-  rewriteOriginsInDir(resolve(rootDir, outputDir), {
+  const { origin } = resolveAndRewriteOrigin({
+    dir: resolve(rootDir, outputDir),
+    originRaw,
+    defaultOrigin,
     fromOrigin,
-    toOrigin: origin,
   });
 
   return {

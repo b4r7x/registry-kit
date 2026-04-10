@@ -8,6 +8,7 @@ import type {
   EnrichedHookData,
   HookDoc,
 } from "./types.js";
+import type { Logger } from "../logger.js";
 
 export interface HookRegistryItem {
   name: string;
@@ -22,6 +23,7 @@ export interface GenerateHooksSourceOptions {
   highlighter: DocsHighlighter;
   themeName: string;
   lang?: HighlightLanguage;
+  logger?: Logger;
 }
 
 export interface GenerateEnrichedHookDataOptions extends GenerateHooksSourceOptions {
@@ -32,25 +34,31 @@ export interface GenerateEnrichedHookDataOptions extends GenerateHooksSourceOpti
 export function generateHooksSource(
   options: GenerateHooksSourceOptions
 ): Record<string, HookSourceData> {
-  const { items, rootDir, highlighter, themeName, lang = "typescript" } = options;
+  const { items, rootDir, highlighter, themeName, lang = "typescript", logger } = options;
   const data: Record<string, HookSourceData> = {};
 
   for (const item of items) {
-    for (const file of item.files) {
-      const hookPath = resolve(rootDir, file.path);
-      if (!existsSync(hookPath)) continue;
-
-      const raw = readFileSync(hookPath, "utf-8");
-      data[item.name] = {
-        name: item.name,
-        title: item.title ?? item.name,
-        description: item.description ?? "",
-        source: {
-          raw,
-          highlighted: highlightCode(highlighter, raw, lang, themeName),
-        },
-      };
+    const file = item.files[0];
+    if (!file?.path) {
+      logger?.warn?.(`Hook "${item.name}": no file path, skipping`);
+      continue;
     }
+    const hookPath = resolve(rootDir, file.path);
+    if (!existsSync(hookPath)) {
+      logger?.warn?.(`Hook "${item.name}": file not found at ${hookPath}, skipping`);
+      continue;
+    }
+
+    const raw = readFileSync(hookPath, "utf-8");
+    data[item.name] = {
+      name: item.name,
+      title: item.title ?? item.name,
+      description: item.description ?? "",
+      source: {
+        raw,
+        highlighted: highlightCode(highlighter, raw, lang, themeName),
+      },
+    };
   }
 
   return data;
@@ -67,15 +75,22 @@ export async function generateEnrichedHookData(
     lang = "typescript",
     loadHookDoc,
     examplesDir,
+    logger,
   } = options;
 
   const data: Record<string, EnrichedHookData> = {};
 
   for (const item of items) {
     const file = item.files[0];
-    if (!file?.path) continue;
+    if (!file?.path) {
+      logger?.warn?.(`Hook "${item.name}": no file path, skipping`);
+      continue;
+    }
     const hookPath = resolve(rootDir, file.path);
-    if (!existsSync(hookPath)) continue;
+    if (!existsSync(hookPath)) {
+      logger?.warn?.(`Hook "${item.name}": file not found at ${hookPath}, skipping`);
+      continue;
+    }
 
     const raw = readFileSync(hookPath, "utf-8");
     const highlighted = highlightCode(highlighter, raw, lang, themeName);

@@ -11,8 +11,9 @@ import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { syncDocsFromArtifacts } from "../docs/index.js";
-import type { SyncLibraryConfig } from "../docs/index.js";
+import type { SyncLibraryConfig } from "../docs/types.js";
 import { computeInputsFingerprint } from "../fingerprint.js";
+import { writeJson as writeJsonFile } from "../utils/json.js";
 import type { ArtifactManifest } from "../manifest.js";
 
 const TEST_ORIGIN = "https://diffgazer.com";
@@ -23,7 +24,8 @@ function writeText(filePath: string, content: string): void {
 }
 
 function writeJson(filePath: string, value: unknown): void {
-  writeText(filePath, `${JSON.stringify(value, null, 2)}\n`);
+  mkdirSync(dirname(filePath), { recursive: true });
+  writeJsonFile(filePath, value);
 }
 
 interface TestLibraryFixture {

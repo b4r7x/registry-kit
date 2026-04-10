@@ -88,17 +88,24 @@ describe("validatePublicRegistryFresh", () => {
   function setupRegistry(
     sourceItems: Array<{
       name: string;
+      type?: string;
       dependencies?: string[];
       registryDependencies?: string[];
       files?: Array<{ path: string }>;
     }>,
     publicItems?: Array<{
       name: string;
+      type?: string;
       dependencies?: string[];
       registryDependencies?: string[];
     }>,
     publicItemFiles?: Record<string, Array<{ path: string; content: string }>>,
   ): void {
+    // Ensure all items have required fields for schema validation
+    sourceItems = sourceItems.map((item) => ({ type: "registry:ui", files: [], ...item }));
+    if (publicItems) {
+      publicItems = publicItems.map((item) => ({ type: "registry:ui", files: [], ...item }));
+    }
     // Source registry
     const sourceDir = join(tempDir, "registry");
     mkdirSync(sourceDir, { recursive: true });

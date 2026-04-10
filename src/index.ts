@@ -1,11 +1,25 @@
 export { buildRegistryArtifacts, copyArtifactsToPackage } from "./artifacts.js";
-export type { CopyArtifactsToPackageOptions } from "./artifacts.js";
+export type {
+  CopyArtifactsToPackageOptions,
+  BuildRegistryArtifactsOptions,
+  BuildRegistryArtifactsResult,
+  CopyDirEntry,
+  RequiredPathEntry,
+  AfterCopyContext,
+} from "./artifacts.js";
 export {
   buildShadcnRegistryWithOrigin,
   runShadcnRegistryBuild,
   ensurePublicRegistryReady,
   validatePublicRegistryFresh,
   resolveLocalShadcnBin,
+} from "./shadcn/index.js";
+export type {
+  BuildShadcnRegistryWithOriginOptions,
+  BuildShadcnRegistryWithOriginResult,
+  RunShadcnRegistryBuildOptions,
+  ValidatePublicRegistryFreshOptions,
+  EnsurePublicRegistryReadyOptions,
 } from "./shadcn/index.js";
 
 export { loadArtifactsFromPackage } from "./artifact-loader.js";
@@ -23,12 +37,18 @@ export type {
 } from "./docs/types.js";
 export { DEFAULT_OUTPUT_PATHS } from "./docs/types.js";
 
-export { validateManifest, ArtifactManifestSchema, createArtifactManifest } from "./manifest.js";
-export type { CreateArtifactManifestOptions } from "./manifest.js";
+export { validateManifest, ArtifactManifestSchema, createArtifactManifest, loadValidatedManifest } from "./manifest.js";
+export type {
+  ArtifactManifest,
+  ArtifactManifestDocs,
+  ArtifactManifestRegistry,
+  ArtifactManifestIntegrity,
+  CreateArtifactManifestOptions,
+} from "./manifest.js";
 
-export { ARTIFACT_MANIFEST_FILENAME, ARTIFACT_FINGERPRINT_FILENAME, ARTIFACT_MANIFEST_REL_PATH, DEFAULT_ARTIFACT_ROOT } from "./constants.js";
+export { ARTIFACT_MANIFEST_FILENAME, ARTIFACT_FINGERPRINT_FILENAME, ARTIFACT_MANIFEST_REL_PATH, DEFAULT_ARTIFACT_ROOT, REGISTRY_ORIGIN } from "./constants.js";
 export { computeInputsFingerprint } from "./fingerprint.js";
-export { buildCopyBundle } from "./copy-bundle.js";
+export { buildCopyBundle, computeIntegrity, CopyBundleItemSchema, CopyBundleSchema } from "./copy-bundle.js";
 export type {
   CopyBundle,
   CopyBundleItem,
@@ -38,6 +58,11 @@ export type {
 export {
   normalizeOrigin,
   rewriteOriginsInDir,
+} from "./origin.js";
+export type {
+  OriginRewriteOptions,
+  NormalizeOriginOptions,
+  RewriteOriginsResult,
 } from "./origin.js";
 export { ensureExists, resetDir } from "./utils/fs.js";
 
@@ -88,8 +113,14 @@ export type {
   LibsConfig,
 } from "./docs-data/index.js";
 
-export type { RegistryFile, RegistryItem, Registry } from "./registry-types.js";
+export {
+  RegistryFileSchema,
+  RegistryItemSchema,
+  RegistrySchema,
+  type RegistryFile,
+  type RegistryItem,
+  type Registry,
+} from "./registry-types.js";
 
-export type * from "./types.js";
 export { defaultLogger } from "./logger.js";
 export type { Logger } from "./logger.js";

@@ -1,7 +1,9 @@
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import { z } from "zod";
 import { ensureExists } from "../utils/fs.js";
 import { readJson } from "../utils/json.js";
+import { RegistrySchema } from "../registry-types.js";
 
 interface EnsureSameStringArrayParams {
   label: string;
@@ -31,17 +33,6 @@ export interface ValidatePublicRegistryFreshOptions {
   publicRegistryDir?: string;
 }
 
-interface RegistryItem {
-  name: string;
-  dependencies?: string[];
-  registryDependencies?: string[];
-  files?: Array<{ path: string; content?: string }>;
-}
-
-interface RegistryIndex {
-  items?: RegistryItem[];
-}
-
 export function validatePublicRegistryFresh(options: ValidatePublicRegistryFreshOptions): void {
   const {
     rootDir,
@@ -50,8 +41,8 @@ export function validatePublicRegistryFresh(options: ValidatePublicRegistryFresh
     publicRegistryDir = "public/r",
   } = options;
 
-  const sourceRegistry = readJson<RegistryIndex>(resolve(rootDir, sourceRegistryPath));
-  const publicRegistry = readJson<RegistryIndex>(resolve(rootDir, publicRegistryDir, "registry.json"));
+  const sourceRegistry = readJson(resolve(rootDir, sourceRegistryPath), RegistrySchema);
+  const publicRegistry = readJson(resolve(rootDir, publicRegistryDir, "registry.json"), RegistrySchema);
   const sourceItems = sourceRegistry.items ?? [];
   const publicItems = publicRegistry.items ?? [];
   const publicByName = new Map(publicItems.map((item) => [item.name, item]));
@@ -64,6 +55,10 @@ export function validatePublicRegistryFresh(options: ValidatePublicRegistryFresh
       ].join("\n"),
     );
   }
+
+  const PublicItemSchema = z.object({
+    files: z.array(z.object({ path: z.string(), content: z.string().optional() })).optional(),
+  }).passthrough();
 
   for (const sourceItem of sourceItems) {
     const publicItem = publicByName.get(sourceItem.name);
@@ -94,7 +89,7 @@ export function validatePublicRegistryFresh(options: ValidatePublicRegistryFresh
     const publicItemPath = resolve(rootDir, publicRegistryDir, `${sourceItem.name}.json`);
     ensureExists(publicItemPath, `public registry item JSON (${sourceItem.name})`);
 
-    const publicItemJson = readJson<{ files?: Array<{ path: string; content?: string }> }>(publicItemPath);
+    const publicItemJson = readJson(publicItemPath, PublicItemSchema);
     const publicFilesByPath = new Map((publicItemJson.files ?? []).map((file) => [file.path, file]));
 
     for (const sourceFile of sourceItem.files ?? []) {

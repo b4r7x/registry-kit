@@ -35,17 +35,6 @@ export function collectAllFiles(rootDir: string, out: string[] = []): string[] {
   return out;
 }
 
-export function collectJsonFiles(rootDir: string, out: string[] = []): string[] {
-  for (const entry of readdirSync(rootDir)) {
-    const fullPath = resolve(rootDir, entry);
-    const stats = statSync(fullPath);
-    if (stats.isDirectory()) {
-      collectJsonFiles(fullPath, out);
-      continue;
-    }
-    if (fullPath.endsWith(".json")) {
-      out.push(fullPath);
-    }
-  }
-  return out;
+export function collectJsonFiles(rootDir: string): string[] {
+  return collectAllFiles(rootDir).filter((f) => f.endsWith(".json"));
 }

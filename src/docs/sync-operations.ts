@@ -159,6 +159,30 @@ function syncRegistries(
   assertNoUnrewrittenOrigin(publicRegistryDir, origin, sourceOrigin);
 }
 
+function copyExamplesForLibrary(
+  artifact: LoadedLibraryArtifacts,
+  primaryId: string,
+  registryDir: string,
+  logger: Logger,
+): void {
+  if (artifact.id === primaryId) return;
+  if (!artifact.manifest.source?.registryDir) return;
+
+  const artExamplesDir = resolve(
+    artifact.artifactRoot,
+    artifact.manifest.source.registryDir,
+    "examples",
+  );
+  if (!existsSync(artExamplesDir)) return;
+
+  const targetExamplesDir = resolve(registryDir, "examples", artifact.id);
+  mkdirSync(targetExamplesDir, { recursive: true });
+  cpSync(artExamplesDir, targetExamplesDir, { recursive: true });
+  logger.info(
+    `[docs-sync] Copied ${artifact.id} examples to registry/examples/${artifact.id}/`,
+  );
+}
+
 export function runDocsSyncPass(params: {
   artifacts: LoadedLibraryArtifacts[];
   primaryArtifact: LoadedLibraryArtifacts;
@@ -197,28 +221,7 @@ export function runDocsSyncPass(params: {
       paths.libraryAssetsDir,
     );
 
-    if (
-      artifact.id !== primaryArtifact.id &&
-      artifact.manifest.source?.registryDir
-    ) {
-      const artExamplesDir = resolve(
-        artifact.artifactRoot,
-        artifact.manifest.source.registryDir,
-        "examples",
-      );
-      if (existsSync(artExamplesDir)) {
-        const targetExamplesDir = resolve(
-          paths.registryDir,
-          "examples",
-          artifact.id,
-        );
-        mkdirSync(targetExamplesDir, { recursive: true });
-        cpSync(artExamplesDir, targetExamplesDir, { recursive: true });
-        logger.info(
-          `[docs-sync] Copied ${artifact.id} examples to registry/examples/${artifact.id}/`,
-        );
-      }
-    }
+    copyExamplesForLibrary(artifact, primaryArtifact.id, paths.registryDir, logger);
 
     afterSync?.({
       libraryId: artifact.id,

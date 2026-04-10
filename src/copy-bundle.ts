@@ -2,21 +2,9 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { z } from "zod";
+import { RegistrySchema } from "./registry-types.js";
 
-const RegistrySchema = z.object({
-  items: z.array(z.object({
-    name: z.string(),
-    type: z.string(),
-    title: z.string().optional(),
-    description: z.string().optional(),
-    files: z.array(z.object({
-      path: z.string(),
-    })),
-    meta: z.record(z.string(), z.unknown()).optional(),
-  })),
-});
-
-const CopyBundleItemSchema = z.object({
+export const CopyBundleItemSchema = z.object({
   name: z.string(),
   title: z.string(),
   description: z.string(),
@@ -28,12 +16,14 @@ const CopyBundleItemSchema = z.object({
   ),
 });
 
+export const CopyBundleSchema = z.object({
+  items: z.array(CopyBundleItemSchema),
+  integrity: z.string().optional(),
+});
+
 export type CopyBundleItem = z.infer<typeof CopyBundleItemSchema>;
 
-export interface CopyBundle {
-  items: CopyBundleItem[];
-  integrity: string;
-}
+export type CopyBundle = z.infer<typeof CopyBundleSchema>;
 
 export interface BuildCopyBundleOptions {
   sourceRoot: string;
@@ -47,6 +37,12 @@ export interface BuildCopyBundleResult {
   outputPath: string;
   itemCount: number;
   integrity: string;
+}
+
+// NOTE: Identical implementation exists in cli-core/src/integrity.ts.
+// Intentionally duplicated: cli-core and registry-kit have no dependency relationship.
+export function computeIntegrity(content: string): string {
+  return `sha256-${createHash("sha256").update(content).digest("hex")}`;
 }
 
 function normalizeFilePath(
@@ -102,9 +98,9 @@ export function buildCopyBundle(
     .sort((a, b) => a.name.localeCompare(b.name));
 
   const contentForIntegrity = JSON.stringify({ items });
-  const integrity = `sha256-${createHash("sha256").update(contentForIntegrity).digest("hex")}`;
+  const integrity = computeIntegrity(contentForIntegrity);
 
-  const bundle: CopyBundle = { items, integrity };
+  const bundle = CopyBundleSchema.parse({ items, integrity });
   writeFileSync(outputPath, `${JSON.stringify(bundle, null, 2)}\n`);
 
   return {

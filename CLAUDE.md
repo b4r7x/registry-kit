@@ -20,7 +20,7 @@ Functions used by the docs app to consume library artifacts:
 ### Shared Utilities
 - `computeInputsFingerprint()` — SHA-256 hashing of source files for change detection
 - `validateManifest()` / `ArtifactManifestSchema` — Zod-based manifest validation (schema v1)
-- `normalizeOrigin()` / `rewriteOriginValue()` / `rewriteOriginsInDir()` — registry origin URL rewriting
+- `normalizeOrigin()` / `rewriteOriginsInDir()` — registry origin URL rewriting
 - File system helpers: `ensureExists`, `resetDir`, `collectAllFiles`, `collectJsonFiles`
 - JSON helpers: `readJson`, `writeJson`
 

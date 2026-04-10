@@ -64,6 +64,7 @@ export interface ComponentDoc {
   tags?: string[]
 }
 
+/** @see diff-ui/registry/ui/code-block/code-block-line.tsx CodeBlockToken (extends with `className`) */
 export interface CodeBlockToken {
   text: string
   color?: string
